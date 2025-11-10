@@ -27,7 +27,7 @@ public:
 	void LoadHighScores(const Int8* _pFileName);
 	void SaveHighScores(const Int8* _pFileName);
 
-	void AddHighScore(Int32 _iScore,  const Int8* _cName = "TeamBMSS");
+	void AddHighScore(Int32 _iScore,  const Int8* _cName = "SpaceShooter 3D");
 	bool IsHighScore(Int32 _iScore);
 
 	void GetScore(Int32 _iPlace, Int32& _iHighScore, std::string& _strHighName);

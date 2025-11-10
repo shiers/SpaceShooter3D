@@ -205,7 +205,7 @@ WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdline,
 	if (iHeight <= 0 || iHeight > 4096) iHeight = 600;
 
 	HWND hwnd = CreateAndRegisterWindow(_hInstance, iWidth, iHeight,
-	                                    L"TeamBMSS 3D Shooter", bFullscreen);
+	                                    L"SpaceShooter 3D", bFullscreen);
 
 	if (!hwnd)
 	{
