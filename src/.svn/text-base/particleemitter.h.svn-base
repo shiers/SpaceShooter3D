@@ -1,0 +1,88 @@
+//
+//   Diploma of Interactive Gaming
+//   Game Development Faculty
+//   Media Design School
+//   Auckland
+//   New Zealand
+//   
+//   (c) 2008 Media Design School
+//   
+//   File Name      :   particleemmiter.h
+//   Description    :   A Particle emitter class
+//   Author         :   Benjamin Maher
+//   Mail           :   DrEnzyme@gmail.com
+//
+
+#pragma once
+
+#ifndef __IGAPR08_IG100_PARTICLEEMMITER_H__
+#define __IGAPR08_IG100_PARTICLEEMMITER_H__
+
+// Library Includes
+#include <d3d9.h>
+
+// Local Includes
+#include "particle.h"
+
+// Types
+
+// Constants
+#define RANDOMPOINTVALUE (static_cast<float>(rand() % 100) - 50.0f) / 100.0f
+
+const float kfDEFAULT_LIFETIME = 10.0f;
+const float kfLIFE_TIME_VARIANCE = 0.3f;
+const float kfDEFAULT_SPEED = 20.0f;
+
+// Prototypes
+
+
+class CParticleEmitter
+{
+   //Member Functions
+public:
+	CParticleEmitter();
+	virtual ~CParticleEmitter();
+
+	virtual bool Initialise(D3DXVECTOR3* _position, 
+		D3DCOLOR _colour, 
+		int _iNumberOfParticles, 
+		IDirect3DDevice9* _pDevice,
+		float _fLifeTime = kfDEFAULT_LIFETIME,
+		float _fSpeed = kfDEFAULT_SPEED);
+
+	void SetPosition(D3DXVECTOR3* _pPosition);
+	virtual void Process(float _fDeltaTick);
+	void Draw();
+
+	bool IsAlive();
+	void SetAlive(bool _bIsAlive);
+
+protected:
+
+private:
+
+   //Member Variables
+public:
+
+protected:
+	CParticle* m_arraypParticles;
+
+	bool m_bIsAlive;
+
+	int m_iNumParticles;
+	float m_fLifeTime;
+	float m_fSpeed;
+
+	D3DCOLOR m_colour;
+
+	IDirect3DVertexBuffer9* m_pVertexBuffer;
+
+	IDirect3DDevice9* m_pDevice;
+
+	D3DXVECTOR3* m_position;
+
+private:
+
+};
+
+#endif //__IGAPR08_IG100_PARTICLEEMMITER_H__

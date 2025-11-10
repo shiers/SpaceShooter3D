@@ -1,0 +1,205 @@
+﻿#pragma once
+
+#ifndef __IGAPR08_IG300_RENDERER_H__
+#define __IGAPR08_IG300_RENDERER_H__
+
+// Library Includes
+#include <windows.h>
+#include <d3dx9.h>
+
+// Local Includes
+#include "defines.h"
+
+// Types
+
+// Constants
+
+// Prototypes
+
+
+class IRenderer
+{
+   //Member Functions
+public:
+	IRenderer()
+	{
+		//Constructor.
+	}
+	virtual ~IRenderer()
+	{
+		//Deconstructor.
+	}
+
+/**
+*
+* Initialises the Renderer.
+*
+* @param _iWidth: width of the frame and z buffers, in pixels.
+* @param _iHeight: height of the frame and z buffers , in pixels.
+* @param _hWindow: handle to a window in which the frame buffer
+* will render.
+* @param _bFullscreen: boolean flag, if true, the program will run
+* in full screen mode.
+* @return Returns true if the function call succeeded.
+*
+*/
+	virtual bool Initialise(Int32 _iWidth, Int32 _iHeight, HWND _hWindow, bool _bFullscreen) = 0;
+
+/**
+*
+* Shuts down the renderer.
+*
+* @return Returns true if the function call succeeded.
+*
+*/
+	virtual bool Shutdown() = 0;
+
+/**
+*
+* Sets the clear colour for the frame buffer.
+*
+* @param _fRed: red component of the frame buffer ranging from 0 to 255.
+* @param _fGreen: green component of the frame buffer ranging from 0 to 255.
+* @param _fBlue: blue component of the frame buffer ranging from 0 to 255.
+* @return void.
+*
+*/
+	virtual void SetClearColour(Float32 _fRed, Float32 _fGreen, Float32 _fBlue) = 0;
+
+/**
+*
+* clears the specified buffers.
+*
+* @param _bTarget: clears the frame buffer.
+* @param _bDepth: clears the depth buffer.
+* @param _bStencil: clears the stencil buffer.
+* @return void.
+*
+*/
+	virtual void Clear(bool _bTarget, bool _bDepth, bool _bStencil) = 0;
+
+/**
+*
+* prepares the renderer for a new render cycle and clears the specified buffers.
+*
+* @param _bTarget: clears the frame buffer.
+* @param _bDepth: clears the depth buffer.
+* @param _bStencil: clears the stencil buffer.
+* @return void.
+*
+*/
+	virtual void StartRender(bool _bTarget, bool _bDepth, bool _bStencil) = 0;
+
+/**
+*
+* ends the current render cycle and renders the frame buffer to the screen.
+* buffer to the screen.
+*
+* @return void.
+*
+*/
+	virtual void EndRender() = 0;
+
+/**
+*
+* Calculates a perspective projection matrix based on the values past in.
+*
+* @param _fFov: specifies the field of view, in radians.
+* @param _fNear: specifies the near plane. Any geometry 
+* in front of the near plane gets culled.
+* @param _fFar: specifies the value for the far plane. 
+* Any geometry behind the far plane gets culled.
+* @return void.
+*
+*/
+	virtual void CalculateProjectionMatrix(Float32 _fFov, Float32 _fNear, Float32 _fFar) = 0;
+
+/**
+*
+* Calculates an orthogonal projection matrix based on the values past in.
+*
+* @param _fNear: specifies the near plane. Any geometry 
+* in front of the near plane gets culled.
+* @param _fFar: specifies the value for the far plane. 
+* Any geometry behind the far plane gets culled.
+* @return void.
+*
+*/
+	virtual void CalculateOrthogonalMatrix(Float32 _fNear, Float32 _fFar) = 0;
+
+/**
+*
+* Sets the world matrix.
+*
+* @param _rWorld: reference to a D3DXMATRIX that contains the world matrix.
+* @return void.
+*
+*/
+	virtual void SetWorldMatrix(D3DXMATRIX& _rWorld) = 0;
+
+/**
+*
+* Sets the view matrix.
+*
+* @param _rView: reference to a D3DXMATRIX that contains the view matrix.
+* @return void.
+*
+*/
+	virtual void SetViewMatrix(D3DXMATRIX& _rView) = 0;
+
+/**
+*
+* Sets the projection matrix.
+*
+* @param _rProjection: reference to a D3DXMATRIX that contains the projection matrix.
+* @return void.
+*
+*/
+	virtual void SetProjectionMatrix(D3DXMATRIX& _rProjection) = 0;
+
+/**
+*
+* Returns the current projection matrix.
+*
+* @return Returns the current projection matrix.
+*
+*/
+	virtual D3DXMATRIX& GetProjectionMatrix() = 0;
+
+/**
+*
+* Returns the current view matrix.
+*
+* @return Returns the current view matrix.
+*
+*/
+	virtual D3DXMATRIX& GetViewMatrix() = 0;
+
+/**
+*
+* Returns the current world matrix.
+*
+* @return Returns the current world matrix.
+*
+*/
+	virtual D3DXMATRIX& GetWorldMatrix() = 0;
+
+protected:
+
+private:
+	IRenderer(const IRenderer& _kr);
+	IRenderer& operator= (const IRenderer& _kr);
+
+   //Member Variables
+public:
+
+protected:
+
+private:
+
+};
+
+#endif //__IGAPR08_IG300_RENDERER_H__
+
+
+

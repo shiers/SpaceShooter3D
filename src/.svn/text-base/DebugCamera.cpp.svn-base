@@ -1,0 +1,155 @@
+//
+// Diploma of Interactive Gaming
+// Game Development Faculty
+// Media Design School
+// Auckland
+// New Zealand
+// 
+// (c) 2008 Media Design School
+// 
+// File Name      :   DebugCamera.cpp
+// Description    :   
+// Author         :   Shawn Shiers
+// Mail           :   shawn@dryad.ca
+//
+
+// Library Includes
+
+// Local Includes
+#include "defines.h"
+#include "game.h"
+
+// This Includes
+#include "DebugCamera.h"
+
+// Static Variables
+
+// Static Function Prototypes
+
+// Implementation
+CDebugCamera::CDebugCamera()
+{
+
+}
+
+CDebugCamera::~CDebugCamera()
+{
+
+}
+
+void
+CDebugCamera::Process(float _fDeltaTick)
+{
+	float fMovement = (1.0f * CAMERA_MOVE);
+
+	D3DXMATRIX* matCurrentView = GetViewMatrix();
+	
+	// Camera Movement
+	//
+	// Forward
+	if (KEYDOWN('W'))
+	{
+		matCurrentView->_43 -= fMovement * _fDeltaTick;
+	}
+	// Backward
+	if (KEYDOWN('S'))
+	{
+		matCurrentView->_43 += fMovement * _fDeltaTick;
+	}
+	// Strafe Left
+	if (KEYDOWN('A'))
+	{
+		matCurrentView->_41 += fMovement * _fDeltaTick;
+	}
+	// Strafe Right
+	if (KEYDOWN('D'))
+	{
+		matCurrentView->_41 -= fMovement * _fDeltaTick;
+	}
+	// Move Up
+	if (KEYDOWN('R'))
+	{
+		matCurrentView->_42 -= fMovement * _fDeltaTick;
+	}
+	// Move Down
+	if (KEYDOWN('F'))
+	{
+		matCurrentView->_42 += fMovement * _fDeltaTick;
+	}
+
+	// Yaw Left and Right.
+	float fYaw = 0.0f;
+	// Yaw Left
+	if (KEYDOWN(VK_LEFT))
+	{
+		fYaw += fMovement * _fDeltaTick;
+	}
+	// Yaw Right
+	if (KEYDOWN(VK_RIGHT))
+	{
+		fYaw -= fMovement * _fDeltaTick;
+	}
+
+	// Pitch Up and Down.
+	float fPitch = 0.0f;
+	// Pitch Up
+	if (KEYDOWN(VK_UP))
+	{
+		fPitch += fMovement * _fDeltaTick;
+	}
+	// Pitch Down
+	if (KEYDOWN(VK_DOWN))
+	{
+		fPitch -= fMovement * _fDeltaTick;
+	}
+
+	// Roll.
+	float fRoll = 0.0f;
+	if (KEYDOWN('M'))
+	{
+		fRoll += fMovement * _fDeltaTick;
+	}
+	if (KEYDOWN('N'))
+	{
+		fRoll -= fMovement * _fDeltaTick;
+	}
+
+	D3DXMATRIX matRotationMatrix;
+	ZeroMemory(&matRotationMatrix, sizeof(D3DXMATRIX));
+	D3DXMatrixIdentity(&matRotationMatrix);
+
+	D3DXMatrixRotationYawPitchRoll(&matRotationMatrix,
+								   D3DXToRadian(fYaw),
+								   D3DXToRadian(fPitch),
+								   D3DXToRadian(fRoll));
+
+	D3DXMatrixMultiply(matCurrentView, matCurrentView,
+					   &matRotationMatrix);
+
+	SetViewMatrix(*matCurrentView);
+
+	//D3DXMATRIX matCameraWorld;
+
+	//D3DXMatrixIdentity(&matCameraWorld);
+
+	//matCameraWorld._11 = m_vecRight.x;
+	//matCameraWorld._12 = m_vecRight.y;
+	//matCameraWorld._13 = m_vecRight.z;
+
+	//matCameraWorld._21 = m_vecUp.x;
+	//matCameraWorld._22 = m_vecUp.y;
+	//matCameraWorld._23 = m_vecUp.z;
+	//	
+	//matCameraWorld._31 = m_vecDirection.x;
+	//matCameraWorld._32 = m_vecDirection.y;
+	//matCameraWorld._33 = m_vecDirection.z;
+	//	
+	//matCameraWorld._41 = m_vecPosition = x;
+	//matCameraWorld._42 = m_vecPosition = y;
+	//matCameraWorld._43 = m_vecPosition = z;
+
+	//// Get the inverse of the world to find the view matrix.
+	//D3DXMatrixInverse(&matCameraWorld, 0, &matCameraWorld);
+	//CGame::GetInstance().GetRenderer()->SetViewMatrix(&matCameraWorld);
+
+}

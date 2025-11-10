@@ -1,0 +1,97 @@
+//
+// Diploma of Interactive Gaming
+// Game Development Faculty
+// Media Design School
+// Auckland
+// New Zealand
+// 
+// (c) 2008 Media Design School
+// 
+// File Name      :   xinputcontroller.h
+// Description    :   XBox 360 Controller
+// Author         :   Shawn Shiers
+// Mail           :   shawn@dryad.ca
+// 
+
+#pragma once
+
+#ifndef __XINPUTCONTROLLER_H__
+#define __XINPUTCONTROLLER_H__
+
+// Library Includes
+#include <d3d9.h>
+#include <xinput.h>
+
+// Local Includes
+#include "defines.h"
+
+// Types
+
+// Constants
+const Float32 kfMaxAxisValue = 32767.0f;
+
+// Prototypes
+
+class CXInputController
+{
+	// Member Functions
+public:
+	CXInputController();
+	~CXInputController();
+
+	bool Initialise(UInt32 _uiID);
+	void Process(Float32 _fDeltatick);
+
+	void GetControllerState();
+
+	void CheckTriggerPresses();
+
+	void CheckControllerDeadZone();
+
+	void SetThumbStickValues();
+	
+	static void TurnRumbleFlagOn();
+
+	static void TurnRumbleFlagOff();
+
+	void SetRumble(bool _bIsRumble);
+
+
+protected:
+
+private:
+
+	// Member Variables
+public:
+
+protected:
+	UInt32 m_uiID;
+	UInt8 m_ucNumOfControllers;
+	XINPUT_STATE m_ControllerState;
+	UInt32 m_uiPacketNumber;
+
+	Float32 m_fLeftStickX;
+	Float32 m_fLeftStickY;
+	UInt32 m_iLeftStickDeadZone;
+
+	Float32 m_fRightStickX;
+	Float32 m_fRightStickY;
+	UInt32 m_iRightStickDeadZone;
+
+	Float32 m_fLeftTrigger;
+	Float32 m_fRightTrigger;
+
+	Float32 m_fButtonStates;
+	
+	UInt16 m_usLeftRumble;
+	UInt16 m_usRightRumble;
+
+	XInputInformation m_XInputInformation;
+
+	static bool s_bIsRumble;
+	static bool s_bIsRegistered;
+
+private:
+
+};
+#endif // __XINPUTCONTROLLER_H__

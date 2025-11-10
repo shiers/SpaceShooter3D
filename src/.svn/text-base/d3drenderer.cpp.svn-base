@@ -1,0 +1,528 @@
+//
+//   Diploma of Interactive Gaming
+//   Game Development Faculty
+//   Media Design School
+//   Auckland
+//   New Zealand
+//   
+//   (c) 2008 Media Design School
+//   
+//   File Name      :   d3drenderer.cpp
+//   Description    :   A Renderer object of type Renderer
+//   Author         :   Benjamin Maher
+//   Mail           :   DrEnzyme@gmail.com
+//
+//   Author         :   Shawn Shiers
+//   Mail           :   shawn@dryad.ca
+//
+
+// Library Includes
+#include <cassert>
+
+// Local Includes
+
+// This Includes
+#include "d3drenderer.h"
+
+// Static Variables
+
+// Static Function Prototypes
+
+// Implementation
+
+CD3DRenderer::CD3DRenderer()
+: m_bShutDown(false)
+, m_pDirect3D(0)
+{
+	//Constructor.
+}
+
+CD3DRenderer::~CD3DRenderer()
+{
+	//Deconstructor.
+	if(!m_bShutDown)
+	{
+		Shutdown();
+	}
+}
+
+/**
+*
+* Calculates an orthogonal projection matrix based on the values past in.
+*
+* @author Benjamin Maher
+* @param _fNear: specifies the near plane. Any geometry 
+* in front of the near plane gets culled.
+* @param _fFar: specifies the value for the far plane. 
+* Any geometry behind the far plane gets culled.
+* @return void.
+*
+*/
+void
+CD3DRenderer::CalculateOrthogonalMatrix(Float32 _fNear, Float32 _fFar)
+{
+	D3DXMATRIX orthomatrix;
+	D3DXMatrixOrthoLH(&orthomatrix, 
+					static_cast<Float32>(m_iScreenWidth), 
+					static_cast<Float32>(m_iScreenHeight), 
+					_fNear, 
+					_fFar);
+	SetProjectionMatrix(orthomatrix);
+}
+
+/**
+*
+* Calculates a perspective projection matrix based on the values past in.
+*
+* @author Benjamin Maher
+* @param _fFov: specifies the field of view, in radians.
+* @param _fNear: specifies the near plane. Any geometry 
+* in front of the near plane gets culled.
+* @param _fFar: specifies the value for the far plane. 
+* Any geometry behind the far plane gets culled.
+* @return void.
+*
+*/
+void
+CD3DRenderer::CalculateProjectionMatrix(Float32 _fFov, Float32 _fNear, Float32 _fFar)
+{
+	D3DXMATRIX projectMatrix;
+	Float32 fAspectRatio = static_cast<Float32>(m_iScreenWidth / m_iScreenHeight);
+	D3DXMatrixPerspectiveFovLH(&projectMatrix, _fFov, fAspectRatio, _fNear, _fFar);
+	SetProjectionMatrix(projectMatrix);
+}
+
+/**
+*
+* clears the specified buffers.
+*
+* @author Benjamin Maher
+* @param _bTarget: clears the frame buffer.
+* @param _bDepth: clears the depth buffer.
+* @param _bStencil: clears the stencil buffer.
+* @return void.
+*
+*/
+void
+CD3DRenderer::Clear(bool _bTarget, bool _bDepth, bool _bStencil)
+{
+	m_bScreenCleared = true;
+	DWORD flags = 0x00000000;
+	HRESULT hr;
+
+	if(_bTarget)
+	{
+		flags |= D3DCLEAR_TARGET;
+	}
+	if(_bDepth)
+	{
+		flags |= D3DCLEAR_ZBUFFER;
+	}
+	if(_bStencil)
+	{
+		flags |= D3DCLEAR_STENCIL;
+	}
+	hr = m_pDevice->Clear(0, 0, flags, m_clearColour, 1.0f, 0);
+	if(FAILED(hr))
+	{
+		assert(0);
+	}
+}
+
+/**
+*
+* ends the current render cycle and renders the frame buffer to the screen.
+* buffer to the screen.
+*
+* @author Benjamin Maher
+* @return void.
+*
+*/
+void
+CD3DRenderer::EndRender()
+{
+	m_bScreenCleared = false;
+	m_bRenderingScene = false;
+
+	m_pDevice->EndScene();
+
+	m_pDevice->Present( NULL, NULL, NULL, NULL);	
+}
+
+/**
+*
+* Returns the current projection matrix.
+*
+* @author Benjamin Maher.
+* @return Returns the current projection matrix.
+*
+*/
+D3DXMATRIX&
+CD3DRenderer::GetProjectionMatrix()
+{
+	return(m_matProjection);
+}
+
+/**
+*
+* Returns the current view matrix.
+*
+* @author Benjamin Maher.
+* @return Returns the current view matrix.
+*
+*/
+D3DXMATRIX&
+CD3DRenderer::GetViewMatrix()
+{
+	return(m_matView);
+}
+
+/**
+*
+* Returns the current world matrix.
+*
+* @author Benjamin Maher.
+* @return Returns the current world matrix.
+*
+*/
+D3DXMATRIX&
+CD3DRenderer::GetWorldMatrix()
+{
+	return(m_matWorld);
+}
+
+/**
+*
+* Initialises the Renderer.
+*
+* @author Benjamin Maher
+* @param _iWidth: width of the frame and z buffers, in pixels.
+* @param _iHeight: height of the frame and z buffers , in pixels.
+* @param _hWindow: handle to a window in which the frame buffer
+* will render.
+* @param _bFullscreen: boolean flag, if true, the program will run
+* in full screen mode.
+* @return Returns true if the function call succeeded.
+*
+*/
+bool
+CD3DRenderer::Initialise(Int32 _iWidth, Int32 _iHeight, HWND _hWindow, bool _bFullscreen)
+{
+	bool bFailure = false;
+
+	m_iScreenWidth = _iWidth;
+	m_iScreenHeight = _iHeight;
+
+	m_hWindow = _hWindow;
+	m_bFullScreen = _bFullscreen;
+
+	m_fFogStart = FOG_START;
+	m_fFogEnd = FOG_END;
+
+	m_pDirect3D = Direct3DCreate9( D3D_SDK_VERSION );
+	D3DPRESENT_PARAMETERS myParams;
+	PopulateParams(myParams, _iHeight,_iWidth , m_hWindow, m_bFullScreen);
+	HRESULT result = m_pDirect3D->CreateDevice( D3DADAPTER_DEFAULT, 
+												D3DDEVTYPE_HAL, 
+												m_hWindow,
+												D3DCREATE_SOFTWARE_VERTEXPROCESSING, 
+												&myParams, 
+												&m_pDevice);
+
+	if(FAILED(result))
+	{
+		bFailure = true;
+		assert(0);
+	}
+	else
+	{
+		m_pDevice->SetRenderState(D3DRS_ZENABLE, D3DZB_TRUE);
+		m_pDevice->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+		m_pDevice->SetRenderState(D3DRS_DITHERENABLE, TRUE);
+		m_pDevice->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
+		m_pDevice->SetFVF(D3DFVF_XYZ | D3DFVF_DIFFUSE);
+
+		m_pDevice->SetRenderState(D3DRS_AMBIENT, 0xFF00FF00);
+	}
+
+	// Initialise the Fog.
+	m_fFogStart = FOG_START;
+	m_fFogEnd = FOG_END;
+
+	m_clearColour = defaultClearColour;
+
+	return(!bFailure);
+
+}
+
+/**
+*
+* Populates the presentation parameters structure based on the supplied values.
+*
+* @author Benjamin Maher
+* @param _myParams: Reference to a D3DPRESENT_PARAMETERS stucture to be populated.
+* @param _height: Height of the frame buffer, in pixels.
+* @param _width: Width of the frame buffer, in pixels.
+* @param _hWnd: Handle to a window, in which Direct 3d will render.
+* @param _bFullScreen: If true, the application will run in full screen mode.
+* @return void.
+*
+*/
+void
+CD3DRenderer::PopulateParams(D3DPRESENT_PARAMETERS& _myParams, Int32 _height, Int32 _width, HWND _hWnd, bool _bFullScreen)
+{
+	ZeroMemory( &_myParams, sizeof(D3DPRESENT_PARAMETERS));
+	if(_bFullScreen)
+	{
+		
+		_myParams.AutoDepthStencilFormat = D3DFMT_D24S8;
+		_myParams.EnableAutoDepthStencil = TRUE;
+		_myParams.BackBufferHeight = _height;
+		_myParams.BackBufferWidth = _width;
+		_myParams.BackBufferFormat = D3DFMT_X8R8G8B8;
+		_myParams.BackBufferCount = 1;
+		_myParams.SwapEffect = D3DSWAPEFFECT_FLIP;
+		_myParams.hDeviceWindow = _hWnd;
+		_myParams.Windowed = FALSE;
+	}
+	else
+	{
+		_myParams.AutoDepthStencilFormat = D3DFMT_D24S8;
+		_myParams.EnableAutoDepthStencil = TRUE;
+		_myParams.BackBufferHeight = _height;
+		_myParams.BackBufferWidth = _width;
+		_myParams.BackBufferFormat = D3DFMT_UNKNOWN;
+		_myParams.BackBufferCount = 1;
+		_myParams.SwapEffect = D3DSWAPEFFECT_DISCARD;
+		_myParams.hDeviceWindow = _hWnd;
+		_myParams.Windowed = TRUE;
+	}
+}
+
+/**
+*
+* Sets the clear colour for the frame buffer.
+*
+* @author Benjamin Maher
+* @param _fRed: red component of the frame buffer ranging from 0 to 255.
+* @param _fGreen: green component of the frame buffer ranging from 0 to 255.
+* @param _fBlue: blue component of the frame buffer ranging from 0 to 255.
+* @return void.
+*
+*/
+void
+CD3DRenderer::SetClearColour(Float32 _fRed, Float32 _fGreen, Float32 _fBlue)
+{
+	if(_fRed > 255)
+	{
+		_fRed = 255;
+	}
+	if(_fRed < 0)
+	{
+		_fRed = 0;
+	}
+	if(_fGreen > 255)
+	{
+		_fGreen = 255;
+	}
+	if(_fGreen < 0)
+	{
+		_fGreen = 0;
+	}
+	if(_fBlue > 255)
+	{
+		_fBlue = 255;
+	}
+	if(_fBlue < 0)
+	{
+		_fBlue = 0;
+	}
+	Int32 newRed = static_cast<Int32>(_fRed);
+	Int32 newGreen = static_cast<Int32>(_fGreen);
+	Int32 newBlue = static_cast<Int32>(_fBlue);
+	m_clearColour = D3DCOLOR_XRGB(newRed, newGreen, newBlue);
+}
+
+/**
+*
+* Sets the projection matrix.
+*
+* @author Benjamin Maher
+* @param _rProjection: reference to a D3DXMATRIX that contains the projection matrix.
+* @return void.
+*
+*/
+void
+CD3DRenderer::SetProjectionMatrix(D3DXMATRIX &_rProjection)
+{
+	m_matProjection = _rProjection;
+	m_pDevice->SetTransform(D3DTS_PROJECTION, &m_matProjection);
+}
+
+/**
+*
+* Sets the view matrix.
+*
+* @author Benjamin Maher
+* @param _rView: reference to a D3DXMATRIX that contains the view matrix.
+* @return void.
+*
+*/
+void
+CD3DRenderer::SetViewMatrix(D3DXMATRIX &_rView)
+{
+	m_matView = _rView;
+	m_pDevice->SetTransform(D3DTS_VIEW, &m_matView);
+}
+
+/**
+*
+* Sets the world matrix.
+*
+* @author Benjamin Maher
+* @param _rWorld: reference to a D3DXMATRIX that contains the world matrix.
+* @return void.
+*
+*/
+void
+CD3DRenderer::SetWorldMatrix(D3DXMATRIX &_rWorld)
+{
+	m_matWorld = _rWorld;
+	m_pDevice->SetTransform(D3DTS_WORLD, &m_matWorld);
+}
+
+/**
+*
+* Shuts down the renderer.
+*
+* @author Benjamin Maher
+* @return Returns true if the function call succeeded.
+*
+*/
+bool
+CD3DRenderer::Shutdown()
+{
+	m_bShutDown = true;
+
+	m_pDirect3D->Release();
+	m_pDirect3D = 0;
+	m_pDevice->Release();
+	m_pDevice = 0;
+	
+	return(true);
+}
+
+/**
+*
+* prepares the renderer for a new render cycle and clears the specified buffers.
+*
+* @author Benjamin Maher
+* @param _bTarget: clears the frame buffer.
+* @param _bDepth: clears the depth buffer.
+* @param _bStencil: clears the stencil buffer.
+* @return void.
+*
+*/
+void
+CD3DRenderer::StartRender(bool _bTarget, bool _bDepth, bool _bStencil)
+{
+	HRESULT hr;
+	if(!m_bScreenCleared)
+	{
+		Clear(_bTarget, _bDepth, _bStencil);
+		m_bScreenCleared = true;
+	}
+	hr = m_pDevice->BeginScene();
+	if(SUCCEEDED(hr))
+	{
+		m_bRenderingScene = true;
+	}
+}
+
+/**
+*
+* Takes a "screen shot" of the application at run time.
+*
+* @author Benjamin Maher
+* @param _pcFilename: Specifies the name of the file the
+* back buffer will be saved to.
+* @return void.
+*
+*/
+void
+CD3DRenderer::DumpBackBufferToDisk(const Int8* _pcFilename)
+{
+	IDirect3DSurface9* backBuffer;
+	m_pDevice->GetBackBuffer(0, 0, D3DBACKBUFFER_TYPE_MONO, &backBuffer);
+
+	Int32 size = static_cast<Int32>(strlen(_pcFilename));
+
+	WChar16* tempWChar = new WChar16[size + 1];
+	for(Int32 i = 0 ; i < size ; ++i)
+	{
+		tempWChar[i] = _pcFilename[i];
+	}
+	tempWChar[size] = '\0';
+
+	D3DXSaveSurfaceToFile(tempWChar, D3DXIFF_BMP , backBuffer, NULL, NULL);
+	
+	backBuffer->Release();
+
+	delete[] tempWChar;
+}
+
+/**
+*
+* Returns a pointer to the current device.
+*
+* @author Benjamin Maher.
+* @return Returns a pointer to the current Direct 3d device.
+*
+*/
+IDirect3DDevice9* 
+CD3DRenderer::GetDevice()
+{
+	return(m_pDevice);
+}
+
+/**
+*
+* Sets up fog.
+*
+* @author Shawn Shiers
+* @param _bFogState: If true, fog will be turned on. If false,
+*		 fog will be turned off.
+* @return void.
+*
+*/
+void 
+CD3DRenderer::SetFog(bool _bFogState)
+{
+	D3DCAPS9 caps;
+
+	ZeroMemory(&caps, sizeof(caps));
+	
+	m_pDirect3D->GetDeviceCaps(0, D3DDEVTYPE_HAL, &caps);
+	
+	//Enabling pixel fog.	
+	if ((caps.RasterCaps & D3DPRASTERCAPS_FOGTABLE) == D3DPRASTERCAPS_FOGTABLE)
+	{
+		m_pDevice->SetRenderState(D3DRS_FOGTABLEMODE, D3DFOG_LINEAR);
+		m_pDevice->SetRenderState(D3DRS_FOGENABLE, TRUE);
+		m_pDevice->SetRenderState(D3DRS_FOGCOLOR, D3DCOLOR_XRGB(255, 128, 64));
+		m_pDevice->SetRenderState(D3DRS_FOGSTART, *reinterpret_cast<DWORD*>(&m_fFogStart));
+		m_pDevice->SetRenderState(D3DRS_FOGEND, *reinterpret_cast<DWORD*>(&m_fFogEnd));
+		m_pDevice->SetRenderState(D3DRS_FOGDENSITY, static_cast<DWORD>(kfFOG_DENSITY));
+	}
+	
+	//Disabling pixel fog.
+	else
+	{
+		if (_bFogState = false)
+		{
+			m_pDevice->SetRenderState(D3DRS_FOGENABLE, FALSE);	
+		}
+	}
+	
+}

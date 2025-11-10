@@ -1,0 +1,62 @@
+//
+//   Diploma of Interactive Gaming
+//   Game Development Faculty
+//   Media Design School
+//   Auckland
+//   New Zealand
+//   
+//   (c) 2008 Media Design School
+//   
+//   File Name      :   billboard.h
+//   Description    :   A bill board for a game
+//   Author         :   Benjamin Maher
+//   Mail           :   DrEnzyme@gmail.com
+//
+
+#pragma once
+
+#ifndef __IGAPR08_IG100_BILLBOARD_H__
+#define __IGAPR08_IG100_BILLBOARD_H__
+
+// Library Includes
+
+// Local Includes
+#include "3dobject.h"
+#include "defines.h"
+
+// Types
+
+// Constants
+
+// Prototypes
+class CMesh;
+class CD3DRenderer;
+
+class CBillboard : public C3DObject
+{
+   //Member Functions
+public:
+	
+	CBillboard();
+	~CBillboard();
+
+	virtual bool Initialise(CMesh* _pMesh, CD3DRenderer* _pRenderer);
+	virtual bool Initialise(CD3DRenderer* _pRenderer, Float32 _fWidth,
+							Float32 _fHeight, Float32 _fDepth,
+							const WChar16* _ptexFilename);
+	virtual void Process(Float32 _fDeltaTick);
+
+protected:
+
+private:
+
+   //Member Variables
+public:
+
+protected:
+
+private:
+
+};
+
+#endif //__IGAPR08_IG100_BILLBOARD_H__

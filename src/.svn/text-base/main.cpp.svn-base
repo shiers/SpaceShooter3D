@@ -1,0 +1,200 @@
+//
+// Diploma of Interactive Gaming
+// Game Development Faculty
+// Media Design School
+// Auckland
+// New Zealand
+// 
+// (c) 2008 Media Design School
+// 
+// File Name      :   main.cpp
+// Description    :   Main implementation file
+// Author         :   Shawn Shiers
+// Mail           :   shawn@dryad.ca
+//
+
+#define WIN32_LEAN_AND_MEAN
+
+// Library Includes
+#include <windows.h>
+#include <windowsx.h>
+#include <cstdlib>
+#include <ctime>
+
+// Local Includes
+#include "Game.h"
+#include "Clock.h"
+#include "vld.h"
+#include "messageprocessor.h"
+#include "iniparser.h"
+
+// This Includes
+
+// Globals
+
+// Static Variables
+
+// Static Function Prototypes
+
+// Implementation
+
+#define WINDOW_CLASS_NAME L"3DSHOOTER"
+
+LRESULT CALLBACK
+WindowProc(HWND _hWnd, UINT _uiMsg, WPARAM _wParam, LPARAM _lParam)
+{
+	// This is the main message handler of the system.
+	PAINTSTRUCT ps; // Used in WM_PAINT
+	HDC hdc;		// Handle to a device context.
+
+	switch (_uiMsg)
+	{
+		case WM_KEYDOWN:
+		{
+			switch (_wParam)
+			{
+				case VK_ESCAPE:
+				{
+					if(CGame::GetInstance().IsTitleScreen())
+					{
+						SendMessage(_hWnd, WM_CLOSE, _wParam, _lParam);
+					}
+					else
+					{
+						CGame::GetInstance().SetTitleScreen(true);
+					}
+				}
+				break;
+			}
+		}
+		case WM_PAINT:
+		{
+			// Simply validate the window.
+			hdc = BeginPaint(_hWnd, &ps);
+			// You would do all your painting here...
+			EndPaint(_hWnd, &ps);
+
+			// Return success.
+			return (0);
+		}
+		break;
+		
+		case WM_DESTROY:
+		{
+			// Kill the application, this sends a WM_QUIT message.
+			PostQuitMessage(0);
+
+			// Return success.
+			return (0);
+		}
+		break;
+
+		default:break;
+	
+	} // End switch.
+
+	return (DefWindowProc(_hWnd, _uiMsg, _wParam, _lParam));
+}
+
+HWND 
+CreateAndRegisterWindow(HINSTANCE _hInstance, Int32 _iWidth, Int32 _iHeight, 
+						LPCWSTR _pcTitle)
+{
+	WNDCLASSEX winclass;
+
+	winclass.cbSize = sizeof(WNDCLASSEX);
+	winclass.style = CS_HREDRAW | CS_VREDRAW;
+	winclass.lpfnWndProc = WindowProc;
+	winclass.cbClsExtra = 0;
+	winclass.cbWndExtra = 0;
+	winclass.hInstance = _hInstance;
+	winclass.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+	winclass.hCursor = LoadCursor(NULL, IDC_ARROW);
+	winclass.hbrBackground = static_cast<HBRUSH>(GetStockObject(BLACK_BRUSH));
+	winclass.lpszMenuName = NULL;
+	winclass.lpszClassName = WINDOW_CLASS_NAME;
+	winclass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+
+	if (!RegisterClassEx(&winclass))
+	{
+		// Failed to register.
+		DWORD id = GetLastError();
+
+		return (0);
+	}
+
+	HWND hwnd;
+	hwnd = CreateWindowEx(NULL, 
+						WINDOW_CLASS_NAME,
+						_pcTitle,
+						WS_BORDER | WS_VISIBLE |WS_SYSMENU | WS_CAPTION,
+						CW_USEDEFAULT, CW_USEDEFAULT,
+						_iWidth, _iHeight,
+						NULL,
+						NULL,
+						_hInstance,
+						NULL);
+	if (!hwnd)
+	{
+		// Failed to create.
+		return (0);
+	}
+	
+	return (hwnd);
+}
+
+Int32 WINAPI
+WinMain(HINSTANCE _hInstance, HINSTANCE _hPrevInstance, LPSTR _lpCmdline, 
+		Int32 _iCmdshow)
+{
+	MSG msg;
+	ZeroMemory(&msg, sizeof(MSG));
+	
+	// seed random number.
+	srand(static_cast<unsigned int>(time(0)));
+
+	CINIParser tempParser;
+	tempParser.LoadIniFile("game.ini");
+
+	Int32 iWidth;
+	Int32 iHeight;
+	tempParser.GetIntValue("game", "screenwidth", iWidth);
+	tempParser.GetIntValue("game", "screenheight", iHeight);
+
+	HWND hwnd = CreateAndRegisterWindow(_hInstance, iWidth, iHeight,
+		L"TeamBMSS 3D Shooter");
+
+	if (!hwnd)
+	{
+		//Log Failure
+		return (0);
+	}
+
+	CGame& rGame = CGame::GetInstance();
+
+	if (!rGame.Initialise(_hInstance, hwnd, iWidth, iHeight))
+	{
+		// Failed
+		return (0);
+	}
+
+	bool bExecuteOneFrame = true;
+
+	while (msg.message != WM_QUIT)
+	{
+		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+		}
+		else
+		{
+			rGame.ExecuteOneFrame();
+		}
+	}
+
+	CGame::DestroyInstance();
+
+	return (static_cast<Int32>(msg.wParam));
+}
+

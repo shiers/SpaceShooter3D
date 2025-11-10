@@ -1,0 +1,69 @@
+//
+// Diploma of Interactive Gaming
+// Game Development Faculty
+// Media Design School
+// Auckland
+// New Zealand
+// 
+// (c) 2008 Media Design School
+// 
+// File Name      :   LogTarget.h
+// Description    :   Log Target Interface.
+// Author         :   Shawn Shiers
+// Mail           :   shawn@dryad.ca
+// 
+
+#pragma once
+
+#ifndef __IGAPR08_IG100_LOGTARGET_H__
+#define __IGAPR08_IG100_LOGTARGET_H__
+
+// Library Includes
+
+// Local Includes
+#include "defines.h"
+
+// Types
+
+// Constants
+
+// Prototypes
+
+class ILogTarget
+{
+	// Member Functions
+public:
+	ILogTarget::ILogTarget()
+	{
+
+	}
+
+	virtual ILogTarget::~ILogTarget()
+	{
+
+	}
+	
+	/**
+	*
+	* This function is resposible for writing a message.
+	*
+	* @author Shawn Shiers
+	* @param _pcMessage is the message to be written.
+	* @return Returns void.
+	*
+	*/
+	void virtual Write(const Int8* _pcMessage) = 0;
+
+protected:
+
+private:
+
+	// Member Variables
+public:
+
+protected:
+
+private:
+
+};
+#endif // __IGAPR08_IG100_LOGTARGET_H__

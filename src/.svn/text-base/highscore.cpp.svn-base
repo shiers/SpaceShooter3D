@@ -1,0 +1,233 @@
+//
+//   Diploma of Interactive Gaming
+//   Game Development Faculty
+//   Media Design School
+//   Auckland
+//   New Zealand
+//   
+//   (c) 2008 Media Design School
+//   
+//   File Name      :   highscore.cpp
+//   Description    :   High score loader and saver
+//   Author         :   Benjamin Maher
+//   Mail           :   DrEnzyme@gmail.com
+
+// Library Includes
+#include <fstream>
+
+// Local Includes
+
+// This Includes
+#include "highscore.h"
+
+// Static Variables
+
+// Static Function Prototypes
+
+// Implementation
+
+CHighScore::CHighScore()
+{
+	//Constructor.
+}
+
+CHighScore::~CHighScore()
+{
+	//Deconstructor.
+}
+
+/**
+*
+* This Function Adds a High Score to the List
+* If the function is not a high score, it isn't added.
+*
+* @author Benjamin Maher
+* @param _iScore: The score that will be added to the list.
+* @param _cName: The name of the player assosiated with the score.
+* @return: void.
+*
+*/
+void
+CHighScore::AddHighScore(Int32 _iScore, const Int8* _cName)
+{
+	UInt32 i;
+	for(i = 0 ; i < m_pvecScores.size() ; ++i)
+	{
+		if(_iScore > m_pvecScores[i])
+		{
+			//Keep searching for where we need to place the score.
+		}
+		else
+		{
+			break;
+		}
+	}
+	if(i > 0)
+	{
+		//A highscore has been found.
+		UInt32 j = 0;
+		while(j < i - 1)
+		{
+			//The score is greater than the lowest score.
+			//Move all the scores before _iScore back one.
+			m_pvecScores[j] = m_pvecScores[j + 1];
+			m_pvecNames[j] = m_pvecNames[j + 1];
+			++j;
+		}
+		m_pvecScores[i - 1] = _iScore;
+		m_pvecNames[i - 1] = _cName;
+	}
+}
+
+/**
+*
+* This Function checks to see if a score is a high score.
+*
+* @author Benjamin Maher
+* @param _iScore: The score that will be checked.
+* @return: The function returns true if the score is
+* a high score.
+*
+*/
+bool
+CHighScore::IsHighScore(Int32 _iScore )
+{
+	bool bIsHighScore = false;
+	for(UInt32 i = 0 ; i < m_pvecScores.size() ; ++i)
+	{
+		if (_iScore > m_pvecScores[i])
+		{
+			bIsHighScore = true;
+		}
+	}
+
+	return(bIsHighScore);
+}
+
+/**
+*
+* This function loads the high scores from the specified file.
+* If the file does not exist, it is created.
+*
+* @author Benjamin Maher
+* @param _pFileName: The name of the file to be loaded
+* @return: void
+*
+*/
+void
+CHighScore::LoadHighScores(const Int8* _pFileName)
+{
+	std::ifstream tempStream;
+	tempStream.open(_pFileName, std::ios::in /*| std::ios::binary*/);
+
+	
+
+	if(tempStream.good())
+	{
+		std::string tempString;
+		//The stream is open
+		m_pvecNames.clear();
+		m_pvecScores.clear();
+		while(!tempStream.eof())
+		{
+			//While we haven't reached the end of the file
+			//Load in the player's name.
+			std::getline(tempStream, tempString);
+			m_pvecNames.push_back(tempString.c_str());
+
+			//Load in the player's score.
+			std::getline(tempStream, tempString);
+			Int32 iTempInt = atoi(tempString.c_str());
+			m_pvecScores.push_back(iTempInt);
+		}
+		tempStream.close();
+		tempStream.clear();
+	}
+	else
+	{
+		//File might not exist. Populate a default file with default values.
+		std::ofstream tempStream2;
+		tempStream2.open(_pFileName, std::ios::out);
+
+		if(tempStream2.good())
+		{
+			for(UInt32 i = 0 ; i < 5 ; ++i)
+			{
+				tempStream2 << "unnamed" << std::endl;
+				tempStream2 << "0";
+				if(i < 4)
+				{
+					tempStream2 << std::endl;
+				}
+			}
+			tempStream2.close();
+			tempStream2.clear();
+			LoadHighScores(_pFileName);
+		}
+	}
+}
+
+/**
+*
+* This function saves the high scores to a specified file
+*
+* @author Benjamin Maher
+* @param _pFileName: The name of the file that the hiscores
+* will be saved out to.
+* @return: void
+*
+*/
+void
+CHighScore::SaveHighScores(const Int8* _pFileName)
+{
+	std::ofstream tempStream;
+	tempStream.open(_pFileName, std::ios::out);
+	if(tempStream.is_open())
+	{
+		for(UInt32 i = 0 ; i < m_pvecScores.size() ; ++i)
+		{
+			tempStream << m_pvecNames[i] << std::endl;
+			tempStream << m_pvecScores[i];
+			if(i < m_pvecScores.size() - 1)
+			{
+				tempStream << std::endl;
+			}
+		}
+		tempStream.close();
+		tempStream.clear();
+	}
+}
+
+/**
+*
+* This function returns a high score at a specified place.
+*
+* @author Benjamin Maher
+* @param _iPlace: The place of the high score starting from the
+* top hi score at 0.
+* @param _iHighScore: An Int32 reference to store the high score.
+* @param _strHighName: A String reference to store the name of the
+* player that achieved the high score.
+* @return: void
+*
+*/
+void
+CHighScore::GetScore(Int32 _iPlace, Int32 &_iHighScore, std::string &_strHighName)
+{
+	_iHighScore = m_pvecScores[_iPlace];
+	_strHighName = m_pvecNames[_iPlace];
+}
+
+/**
+*
+* This function returns the number of high scores.
+*
+* @author Benjamin Maher
+* @return: The number of high scores.
+*
+*/
+Int32
+CHighScore::GetNumScores()
+{
+	return(static_cast<Int32>(m_pvecScores.size()));
+}

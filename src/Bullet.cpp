@@ -1,0 +1,114 @@
+﻿#include "../include/messageprocessor.h"
+
+// This Includes
+#include "../include/Bullet.h"
+
+// Static Variables
+
+// Static Function Prototypes
+
+// Implementation
+CBullet::CBullet()
+	: m_eBulletType(BULLET_STANDARD_TYPE)
+	  , m_ucBulletDamage(0)
+	  , m_fLifeTime(0)
+{
+}
+
+CBullet::~CBullet()
+{
+	// Deconstructor
+}
+
+/**
+*
+* This function initialises the camera system.
+*
+* @param _eBulletType This is the type of bullet to be created.
+* @param _ucBulletDamage This specifies the amount of damage a bullet does.
+* @return Returns true if successful.
+*
+*/
+bool
+CBullet::Initialise(const WChar16 *_pFileName,
+                    const WChar16 *_pTextureFileName,
+                    CD3DRenderer *_pRenderer,
+                    UInt8 _ucBulletDamage,
+                    Float32 _fBulletSpeed,
+                    bool _bIsActive,
+                    Float32 _fLifeTime)
+{
+	bool bSuccess = true;
+
+	m_fLifeTime = _fLifeTime;
+	m_bIsActive = _bIsActive;
+	CMessageProcessor *m_pMessageProcessor = CMessageProcessor::GetInstance();
+
+	m_ucBulletDamage = _ucBulletDamage;
+
+	bSuccess = C3DObject::Initialise(_pFileName, _pTextureFileName, _pRenderer);
+
+	if (!bSuccess)
+	{
+		// Error: C3DObject not initialised.
+		m_pMessageProcessor->SendMessage("ERROR: CBullet::Initialise - Did not initialise successfully.");
+		bSuccess = false;
+	}
+
+	m_fSpeed = _fBulletSpeed;
+
+	return (bSuccess);
+}
+
+void
+CBullet::Process(Float32 _fDeltaTick)
+{
+	if (m_bIsActive)
+	{
+		m_fLifeTime -= _fDeltaTick;
+		if (m_fLifeTime <= 0.0f)
+		{
+			m_fLifeTime = 0.0f;
+			m_bIsActive = false;
+		}
+		CDynamicEntity::Process(_fDeltaTick);
+	}
+	if (m_bHitBoundaries)
+	{
+		m_bIsActive = false;
+	}
+}
+
+EBulletType
+CBullet::GetBulletType() const
+{
+	return (m_eBulletType);
+}
+
+void
+CBullet::SetBulletType(EBulletType _eBulletType)
+{
+	m_eBulletType = _eBulletType;
+}
+
+bool
+CBullet::IsBulletActive() const
+{
+	return (m_bIsActive);
+}
+
+void
+CBullet::SetBulletActivity(bool _bIsActive, Float32 _fLifeTime)
+{
+	m_fLifeTime = _fLifeTime;
+	m_bIsActive = _bIsActive;
+}
+
+UInt8
+CBullet::GetBulletDamage()
+{
+	return (m_ucBulletDamage);
+}
+
+
+

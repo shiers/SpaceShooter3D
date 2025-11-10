@@ -1,0 +1,62 @@
+//
+//   Diploma of Interactive Gaming
+//   Game Development Faculty
+//   Media Design School
+//   Auckland
+//   New Zealand
+//   
+//   (c) 2008 Media Design School
+//   
+//   File Name      :   dikeyboard.h
+//   Description    :   A Keyboard for Direct Input
+//   Author         :   Benjamin Maher
+//   Mail           :   DrEnzyme@gmail.com
+//
+
+#pragma once
+
+#ifndef __IGAPR08_IG100_DIKEYBOARD_H__
+#define __IGAPR08_IG100_DIKEYBOARD_H__
+
+// Library Includes
+#define DIRECTINPUT_VERSION 0x0800
+#include <dinput.h>
+
+// Local Includes
+#include "directinputcontroller.h"
+
+// Types
+
+// Constants
+const int ki_KEYBOARD_BUFFER_SIZE = 256;
+
+// Prototypes
+#define IFKEYAPRESSEDTHENB(a, b) if(m_cKeyboardStatus[a] & 0x80) pMessageProcessor->SendMessage(b)
+
+class CDIKeyboard : public CDirectInputController
+{
+   //Member Functions
+public:
+	CDIKeyboard();
+	virtual ~CDIKeyboard();
+
+	virtual bool Initialise();
+	virtual void Process(float _fDeltaTick);
+
+protected:
+
+private:
+	
+	void ProcessKeyboardStatus();
+
+   //Member Variables
+public:
+
+protected:
+
+private:
+	char* m_cKeyboardStatus;
+
+};
+
+#endif //__IGAPR08_IG100_DIKEYBOARD_H__

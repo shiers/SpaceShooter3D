@@ -1,0 +1,55 @@
+//
+// Diploma of Interactive Gaming
+// Game Development Faculty
+// Media Design School
+// Auckland
+// New Zealand
+// 
+// (c) 2008 Media Design School
+// 
+// File Name      :   LogOutputWindow.h
+// Description    :   
+// Author         :   Shawn Shiers
+// Mail           :   shawn@dryad.ca
+// 
+
+#pragma once
+
+#ifndef __IGAPR08_IG100_LOGOUTPUTWINDOW_H__
+#define __IGAPR08_IG100_LOGOUTPUTWINDOW_H__
+
+// Library Includes
+
+// Local Includes
+#include "defines.h"
+#include "LogTarget.h"
+#include "LogManager.h"
+
+// Types
+
+// Constants
+
+// Prototypes
+
+class CLogOutputWindow : public ILogTarget
+{
+	// Member Functions
+public:
+	CLogOutputWindow();
+	~CLogOutputWindow();
+	
+	void Write(const Int8* _pcMessage);
+
+protected:
+
+private:
+
+	// Member Variables
+public:
+
+protected:
+
+private:
+
+};
+#endif // __IGAPR08_IG100_LOGOUTPUTWINDOW_H__

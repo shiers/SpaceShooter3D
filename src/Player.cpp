@@ -1,0 +1,325 @@
+﻿#include <cmath>
+
+// Local Includes
+#include "../include/mesh.h"
+
+// This Includes
+#include "../include/Player.h"
+
+// Static Variables
+
+// Static Function Prototypes
+
+// Implementation
+CPlayer::CPlayer()
+	: m_ucLives(0)
+	  , m_uiScore(0)
+	  , m_ucPlayerStrength(0)
+	  , m_fBulletPowerUpTime(0.0f)
+	  , m_fMaxSpeed(0.0f)
+	  , m_iId(0)
+	  , m_fMaxReloadTime(0.0f)
+	  , m_fCurrentReloadTime(0.0f)
+	  , m_IsActive(0)
+	  , m_fSpeedPowerUpTime(0.0f)
+{
+	ZeroMemory(&m_vec3Heading, sizeof(D3DXVECTOR3));
+}
+
+CPlayer::~CPlayer()
+{
+}
+
+/**
+*
+* Initialises the player.
+*
+* @param _vec3Position: starting position of the player.
+* @param _cNumberOfLives: starting number of lives.
+* @param _pcXFileName: location of the .x file for Player.
+* @param _pcTextureFileName: location of the texture for player.
+* @return Returns true if the function call succeeded.
+*
+*/
+bool
+CPlayer::Initialise(D3DXVECTOR3 _vec3Position,
+                    UInt8 _cNumberOfLives,
+                    const WChar16 *_pcXFileName,
+                    const WChar16 *_pcTextureFileName,
+                    CD3DRenderer *_pRenderer,
+                    Float32 _fMaxSpeed,
+                    Float32 _fTurnSpeed,
+                    Float32 _fFriction,
+                    Int32 _iId,
+                    Float32 _fReloadTime,
+                    EMessage _messageLeft,
+                    EMessage _messageRight,
+                    EMessage _messageUp,
+                    EMessage _messageDown)
+{
+	m_IsActive = true;
+
+	bool bFailure = false;
+
+	m_fMaxReloadTime = _fReloadTime;
+
+	m_iId = _iId;
+
+	ZeroMemory(&m_vec3FiringDirection, sizeof(D3DXVECTOR3));
+
+	m_fMaxSpeed = _fMaxSpeed;
+	m_fTurnSpeed = _fTurnSpeed;
+	m_fMoveFriction = _fFriction;
+
+	m_messageLeft = _messageLeft;
+	m_messageRight = _messageRight;
+	m_messageUp = _messageUp;
+	m_messageDown = _messageDown;
+
+	m_pMessageProcessor = CMessageProcessor::GetInstance();
+
+	bFailure = !CDynamicEntity::Initialise(_pcXFileName, _pcTextureFileName, _pRenderer);
+
+	if (!bFailure)
+	{
+		m_ucLives = _cNumberOfLives;
+
+		SetXYZ(_vec3Position.x, _vec3Position.y, _vec3Position.z);
+	}
+
+	return (!bFailure);
+}
+
+/**
+*
+* This function does any processing that the player requires.
+*
+* @param _fDeltaTick is the amount of time elapsed between frames.
+* @return Returns true if successful.
+*
+*/
+void
+CPlayer::Process(Float32 _fDeltatick)
+{
+	if (m_IsActive)
+	{
+		bool bMoved = false;
+		bool bMovingWithArrowKeys = false;
+		m_bIsFiring = false;
+
+		ZeroMemory(&m_vec3Heading, sizeof(D3DXVECTOR3));
+		ZeroMemory(&m_vec3FiringDirection, sizeof(D3DXVECTOR3));
+		if (m_pMessageProcessor->CheckForKeyMessage(m_messageLeft))
+		{
+			m_vec3Heading.x -= 1.0f;
+			bMovingWithArrowKeys = true;
+		}
+		if (m_pMessageProcessor->CheckForKeyMessage(m_messageRight))
+		{
+			m_vec3Heading.x += 1.0f;
+			bMovingWithArrowKeys = true;
+		}
+		if (m_pMessageProcessor->CheckForKeyMessage(m_messageUp))
+		{
+			m_vec3Heading.z += 1.0f;
+			bMovingWithArrowKeys = true;
+		}
+		if (m_pMessageProcessor->CheckForKeyMessage(m_messageDown))
+		{
+			m_vec3Heading.z -= 1.0f;
+			bMovingWithArrowKeys = true;
+		}
+		if (bMovingWithArrowKeys)
+		{
+			bMoved = true;
+			if (m_fCurrentReloadTime <= 0.0f)
+			{
+				m_fCurrentReloadTime = m_fMaxReloadTime;
+				m_bIsFiring = true;
+				m_vec3FiringDirection.x = m_matWorld._31;
+				m_vec3FiringDirection.y = 0.0f;
+				m_vec3FiringDirection.z = m_matWorld._33;
+				D3DXVec3Normalize(&m_vec3FiringDirection, &m_vec3FiringDirection);
+			}
+		}
+
+		XInputInformation *tempInformation = m_pMessageProcessor->GetXInputControllerState(m_iId);
+		if (tempInformation->fLeftControllerX || tempInformation->fLeftControllerY)
+		{
+			m_vec3Heading.x += tempInformation->fLeftControllerX;
+			m_vec3Heading.z += tempInformation->fLeftControllerY;
+			bMoved = true;
+		}
+
+		if (tempInformation->fRightControllerX || tempInformation->fRightControllerY)
+		{
+			if (m_fCurrentReloadTime <= 0.0f)
+			{
+				if (m_fBulletPowerUpTime > 0.0f)
+				{
+					m_fCurrentReloadTime = m_fMaxReloadTime * 0.3f;
+				} else
+				{
+					m_fCurrentReloadTime = m_fMaxReloadTime;
+				}
+				m_bIsFiring = true;
+				m_vec3FiringDirection.x = tempInformation->fRightControllerX;
+				m_vec3FiringDirection.y = 0.0f;
+				m_vec3FiringDirection.z = tempInformation->fRightControllerY;
+				D3DXVec3Normalize(&m_vec3FiringDirection, &m_vec3FiringDirection);
+			}
+		}
+
+		if (bMoved)
+		{
+			m_fSpeed = m_fMaxSpeed;
+			if (m_fSpeedPowerUpTime > 0.0f)
+			{
+				m_fSpeed = m_fMaxSpeed * 2.0f;
+			}
+		}
+
+		if (m_fCurrentReloadTime > 0.0f)
+		{
+			m_fCurrentReloadTime -= _fDeltatick;
+		}
+		if (m_fSpeedPowerUpTime > 0.0f)
+		{
+			m_fSpeedPowerUpTime -= _fDeltatick;
+		}
+		if (m_fBulletPowerUpTime > 0.0f)
+		{
+			m_fBulletPowerUpTime -= _fDeltatick;
+		}
+
+		CDynamicEntity::Process(_fDeltatick);
+	}
+}
+
+/**
+*
+* This function adds to the current score.
+*
+* @param _uiScore is the amount of time elapsed between frames.
+* @return Returns void.
+*
+*/
+void
+CPlayer::AddToScore(Int32 _uiScore)
+{
+	m_uiScore += _uiScore;
+}
+
+/**
+*
+* This function gets the current score.
+*
+* @param
+* @return Returns the current score.
+*
+*/
+UInt32 *
+CPlayer::GetScore()
+{
+	return (&m_uiScore);
+}
+
+/**
+*
+* This function set the player's lives.
+*
+* @param _usLives is the amout of lives to be set to a player.
+* @return Returns void.
+*
+*/
+void
+CPlayer::SetLives(UInt8 _ucLives)
+{
+	m_ucLives = _ucLives;
+}
+
+/**
+*
+* This function gets the player's current lives.
+*
+* @param
+* @return Returns the player's current lives.
+*
+*/
+UInt8 *
+CPlayer::GetLives()
+{
+	return (&m_ucLives);
+}
+
+/**
+*
+* This function set the amount of time that a Bullet power up lasts.
+*
+* @param _fBulletPowerUpTime is the amount of time that a Bullet power up lasts.
+* @return Returns void.
+*
+*/
+void
+CPlayer::SetBulletPowerUpTime(Float32 _fBulletPowerUpTime)
+{
+	m_fBulletPowerUpTime = _fBulletPowerUpTime;
+}
+
+/**
+*
+* This function returns a boolean which determines if the player is shooting.
+*
+* @param
+* @return Returns a boolean which determines if the player is shooting.
+*
+*/
+bool
+CPlayer::IsFiring()
+{
+	return (m_bIsFiring);
+}
+
+/**
+*
+* This function returns the direction the player is shooting.
+*
+* @param
+* @return Returns the direction the player is shooting.
+*
+*/
+D3DXVECTOR3
+CPlayer::GetFiringDirection()
+{
+	return (m_vec3FiringDirection);
+}
+
+bool
+CPlayer::IsActive()
+{
+	return (m_IsActive);
+}
+
+void
+CPlayer::SetActive(bool _bIsActive)
+{
+	m_IsActive = _bIsActive;
+}
+
+void
+CPlayer::Draw()
+{
+	if (m_IsActive)
+	{
+		CDynamicEntity::Draw();
+	}
+}
+
+void
+CPlayer::SetSpeedPowerUpTime(Float32 _fAmount)
+{
+	m_fSpeedPowerUpTime = _fAmount;
+}
+
+
+

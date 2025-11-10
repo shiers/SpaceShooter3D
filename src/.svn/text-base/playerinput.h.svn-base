@@ -1,0 +1,69 @@
+//
+//   Diploma of Interactive Gaming
+//   Game Development Faculty
+//   Media Design School
+//   Auckland
+//   New Zealand
+//   
+//   (c) 2008 Media Design School
+//   
+//   File Name      :   playerinput.h
+//   Description    :   A Player Input class
+//   Author         :   Benjamin Maher
+//   Mail           :   DrEnzyme@gmail.com
+//
+
+#pragma once
+
+#ifndef __IGAPR08_IG100_PLAYERINPUT_H__
+#define __IGAPR08_IG100_PLAYERINPUT_H__
+
+// Library Includes
+#include <vector>
+
+// Local Includes
+
+// Types
+
+// Constants
+const int ki_MAX_NUM_CONTROLLERS = 4;
+
+// Prototypes
+class CXInputController;
+class CDirectInputController;
+
+class CPlayerInput
+{
+   //Member Functions
+public:
+
+	~CPlayerInput();
+
+	bool Initialise();
+	void Process(float _fDeltaTick);
+
+	static CPlayerInput& GetInstance();
+	static void DestroyInstance();
+
+	void EnumerateControllers();
+
+protected:
+
+private:
+	CPlayerInput();
+
+   //Member Variables
+public:
+
+protected:
+
+private:
+	static CPlayerInput* s_pPlayerInput;
+
+	CXInputController* m_pXInputController[ki_MAX_NUM_CONTROLLERS];
+	CDirectInputController* m_pvecDInputControllers[ki_MAX_NUM_CONTROLLERS];
+
+	int m_iNumDIControllers;
+};
+
+#endif //__IGAPR08_IG100_PLAYERINPUT_H__

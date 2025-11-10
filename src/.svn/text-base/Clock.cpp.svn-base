@@ -1,0 +1,88 @@
+//
+// Diploma of Interactive Gaming
+// Game Development Faculty
+// Media Design School
+// Auckland
+// New Zealand
+// 
+// (c) 2008 Media Design School
+// 
+// File Name      :   Clock.cpp
+// Description    :   Game Clock implementation file
+// Author         :   Shawn Shiers
+// Mail           :   shawn@dryad.ca
+//
+
+// Library Includes
+#include <windows.h>
+#include <mmsystem.h>
+
+// Local Includes
+
+// This Includes
+#include "Clock.h"
+
+// Static Variables
+
+// Static Function Prototypes
+
+// Implementation
+
+CClock::CClock()
+: m_fTimeElapsed(0.0f)
+, m_fDeltaTime(0.0f)
+, m_fLastTime(0.0f)
+, m_fCurrentTime(0.0f)
+{
+	// Constructor
+}
+
+CClock::~CClock()
+{
+	// Deconstructor
+}
+
+bool
+CClock::Initialise()
+{
+	return (true);
+}
+
+/**
+*
+* This function calculates the amount of time elapsed between frames.
+*
+* @author Shawn Shiers
+* @return Returns void.
+*
+*/
+void
+CClock::Process()
+{
+	m_fLastTime = m_fCurrentTime;
+
+	m_fCurrentTime = static_cast<Float32>(timeGetTime());
+
+	if(m_fLastTime == 0.0f)
+	{
+		m_fLastTime = m_fCurrentTime;
+	}
+
+	m_fDeltaTime = m_fCurrentTime - m_fLastTime;
+
+	m_fTimeElapsed += m_fDeltaTime;
+}
+
+/**
+*
+* This function sums the two values passed in as parameters.
+*
+* @author Shawn Shiers
+* @return Returns the Delta Time.
+*
+*/
+Float32
+CClock::GetDeltaTick()
+{
+	return (m_fDeltaTime / 1000.0f);
+}

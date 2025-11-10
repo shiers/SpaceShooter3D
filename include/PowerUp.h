@@ -1,0 +1,64 @@
+﻿#pragma once
+
+#ifndef __POWERUP_H__
+#define __POWERUP_H__
+
+// Library Includes
+
+// Local Includes
+#include "dynamicentity.h"
+
+// Types
+typedef enum
+{
+	INVALID_POWERUP_TYPE,
+	POWERUP_SHOT,
+	POWERUP_SPEED,
+	POWERUP_SHIELD,
+}EPowerUpType;
+
+// Constants
+
+// Prototypes
+class CD3DRenderer;
+
+class CPowerUp : public CDynamicEntity
+{
+	// Member Functions
+public:
+	CPowerUp();
+	~CPowerUp();
+
+	bool Initialise(EPowerUpType _ePowerUpType, 
+					Float32 _fSpeed, 
+					Float32 _fTurnSpeed,
+					CD3DRenderer* _pRenderer,
+					bool _bIsActive = true);
+
+	bool IsActive();
+	void SetActive(bool _bIsActive);
+
+	void Process(Float32 _fDeltaTick);
+
+	void Draw();
+
+	EPowerUpType GetPowerUpType() const;
+
+protected:
+
+private:
+
+	// Member Variables
+public:
+
+protected:
+	EPowerUpType m_ePowerUpType;
+	bool m_bIsActive;
+
+private:
+
+};
+#endif // __POWERUP_H__
+
+
+

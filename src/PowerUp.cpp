@@ -1,0 +1,137 @@
+﻿#include "../include/PowerUp.h"
+
+// Static Variables
+
+// Static Function Prototypes
+
+// Implementation
+CPowerUp::CPowerUp()
+	: m_ePowerUpType(INVALID_POWERUP_TYPE)
+{
+}
+
+CPowerUp::~CPowerUp()
+{
+}
+
+/**
+*
+* This function initialises the Power-up.
+*
+* @param _ePowerUpType This specifies the type of the power-up.
+* @return Returns true if successful.
+*
+*/
+bool
+CPowerUp::Initialise(EPowerUpType _ePowerUpType,
+                     Float32 _fSpeed,
+                     Float32 _fTurnSpeed,
+                     CD3DRenderer *_pRenderer,
+                     bool _bIsActive)
+{
+	m_fSpeed = _fSpeed;
+	m_fTurnSpeed = _fTurnSpeed;
+	m_ePowerUpType = _ePowerUpType;
+	m_bIsActive = _bIsActive;
+
+	switch (m_ePowerUpType)
+	{
+		case POWERUP_SPEED:
+		{
+			CDynamicEntity::Initialise(L"media\\speedpowerup.x", L"media\\speedpowerup.png", _pRenderer);
+		}
+		break;
+		case POWERUP_SHOT:
+		{
+			CDynamicEntity::Initialise(L"media\\bulletpowerup.x", L"media\\bulletpowerup.png", _pRenderer);
+		}
+		break;
+		case POWERUP_SHIELD:
+		{
+			CDynamicEntity::Initialise(L"media\\shieldpowerup.x", L"media\\shieldpowerup.png", _pRenderer);
+		}
+	}
+	Float32 cRandomXPos = (static_cast<float>(rand() % 100) / 100.0f) - 0.5f;
+	Float32 cRandomZPos = (static_cast<float>(rand() % 100) / 100.0f) - 0.5f;
+
+	m_vec3Heading.x = cRandomXPos;
+	m_vec3Heading.z = cRandomZPos;
+
+	D3DXVec3Normalize(&m_vec3Heading, &m_vec3Heading);
+
+	return (true);
+}
+
+/**
+*
+* This function gets the Power-up type.
+*
+* @return Returns the type of power-up.
+*
+*/
+EPowerUpType
+CPowerUp::GetPowerUpType() const
+{
+	return (m_ePowerUpType);
+}
+
+void
+CPowerUp::Process(Float32 _fDeltaTick)
+{
+	if (m_bIsActive)
+	{
+		if (m_bHitLeftBoundary)
+		{
+			if (m_vec3Heading.x < 0.0f)
+			{
+				m_vec3Heading.x *= -1;
+			}
+		}
+		if (m_bHitRightBoundary)
+		{
+			if (m_vec3Heading.x > 0.0f)
+			{
+				m_vec3Heading.x *= -1;
+			}
+		}
+		if (m_bHitBottomBoundary)
+		{
+			if (m_vec3Heading.z < 0.0f)
+			{
+				m_vec3Heading.z *= -1;
+			}
+		}
+		if (m_bHitTopBoundary)
+		{
+			if (m_vec3Heading.z > 0.0f)
+			{
+				m_vec3Heading.z *= -1;
+			}
+		}
+		CDynamicEntity::Process(_fDeltaTick);
+	}
+}
+
+void
+CPowerUp::Draw()
+{
+	if (m_bIsActive)
+	{
+		CDynamicEntity::Draw();
+	}
+}
+
+bool
+CPowerUp::IsActive()
+{
+	return (m_bIsActive);
+}
+
+void
+CPowerUp::SetActive(bool _bIsActive)
+{
+	m_bIsActive = _bIsActive;
+}
+
+
+

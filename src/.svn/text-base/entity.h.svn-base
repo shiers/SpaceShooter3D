@@ -1,0 +1,66 @@
+//
+//   Diploma of Interactive Gaming
+//   Game Development Faculty
+//   Media Design School
+//   Auckland
+//   New Zealand
+//   
+//   (c) 2008 Media Design School
+//   
+//   File Name      :   entity.h
+//   Description    :   A Generic Entity in a 3d game
+//   Author         :   Benjamin Maher
+//   Mail           :   DrEnzyme@gmail.com
+//
+
+#pragma once
+
+#ifndef __IGAPR08_IG100_ENTITY_H__
+#define __IGAPR08_IG100_ENTITY_H__
+
+// Library Includes
+
+// Local Includes
+#include "defines.h"
+
+// Types
+
+// Constants
+
+// Prototypes
+
+class IEntity
+{
+   //Member Functions
+public:
+	IEntity()
+	{
+	}
+	virtual ~IEntity()
+	{
+	}
+	
+	/**
+	*
+	* This function processes the entity by specified amount.
+	*
+	* @author Benjamin Maher
+	* @param _fDeltaTick: The change in time since the previous frame.
+	*
+	*/
+	virtual void Process(Float32 _fDeltaTick) = 0;
+
+protected:
+
+private:
+
+   //Member Variables
+public:
+
+protected:
+
+private:
+
+};
+
+#endif //__IGAPR08_IG100_ENTITY_H__

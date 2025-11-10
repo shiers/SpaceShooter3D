@@ -1,0 +1,81 @@
+﻿#pragma once
+
+#ifndef __ENEMY_H__
+#define __ENEMY_H__
+
+// Library Includes
+
+// Local Includes
+#include "dynamicentity.h"
+#include "defines.h"
+
+// Types
+
+// Constants
+
+// Prototypes
+
+class CEnemy : public CDynamicEntity
+{
+	// Member Functions
+public:
+	CEnemy();
+	virtual ~CEnemy();
+
+	virtual bool Initialise(D3DXMATRIX* _pmatPointToFollow,
+							D3DXVECTOR3 _vec3Position,
+							const WChar16* _pcXFileName, 
+							const WChar16* _pcTextureFileName,
+							CD3DRenderer* _pRenderer,
+							Float32 _fSpeed, 
+							Float32 _fTurnSpeed, 
+							UInt8 _ucLife,
+							Float32 _fRefireRate,
+							Int16 _sEnemyPointValue,
+							bool _bIsActive = true);
+	virtual bool Initialise(D3DXMATRIX* _pmatPointToFollow,
+							D3DXVECTOR3 _vec3Position,
+							bool _bIsActive = true);
+
+	virtual void Process(Float32 _fDeltaTick);
+
+	virtual void Draw();
+
+	void SetEnemyPointValue(UInt16 _usEnemyPointValue);
+
+	UInt16 GetEnemyPointsValue();
+
+	virtual bool IsReadyToShoot();
+
+	void DepleteLife(UInt8 _ucAmount = 1);
+	UInt8 GetLife();
+
+	void SetActive(bool _bIsActive);
+	bool IsActive();
+
+	void SetLife(UInt8 _ucAmount = 0);
+
+protected:
+
+	D3DXMATRIX* m_pmatPointToFollow;
+	UInt8 m_ucLife;
+	UInt8 m_ucMaxLife;
+	Float32 m_fCurrentRefireRate;
+	Float32 m_fMaxRefireRate;
+	Int16 m_sEnemyPointValue;
+	bool m_bIsActive;
+
+private:
+
+	// Member Variables
+public:
+
+protected:
+
+private:
+
+};
+#endif // __ENEMY_H__
+
+
+

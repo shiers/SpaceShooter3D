@@ -1,0 +1,81 @@
+﻿#pragma once
+
+#ifndef SPACESHOOTER3D_DIRECTINPUTCONTROLLER_H
+#define SPACESHOOTER3D_DIRECTINPUTCONTROLLER_H
+
+// Library Includes
+#define DIRECTINPUT_VERSION 0x0800
+#define INITGUID
+
+#include <dinput.h>
+
+// Local Includes
+
+// Types
+
+// Constants
+const int kiMAX_CHARS = 260;
+
+enum EControllerType
+{
+	INVALID_CONTROLLERTYPE,
+	CONTROLLER_MOUSE,
+	CONTROLLER_KEYBOARD,
+	CONTROLLER_JOYSTICK
+};
+
+class CDirectInputController;
+
+struct DescribeMe
+{
+	EControllerType myControllerType; //Describes what controller this is.
+	CDirectInputController* pToMe; //A Pointer to the device that instantiated the call back
+	bool bAttachedToComputer; //A Boolean to determine whether or not the device is attached to the computer
+	IDirectInputDevice8* pDevice; //If the device is attached to the computer, this value will get populated.
+};
+
+// Prototypes
+//BOOL CALLBACK CallBackFunction(LPCDIDEVICEINSTANCE _pDeviceInstance, LPVOID _pVoidPointer);
+
+class CDirectInputController
+{
+   //Member Functions
+public:
+	CDirectInputController();
+	virtual ~CDirectInputController();
+
+	virtual bool Initialise();
+	virtual void Process(float _fDeltaTick) = 0;
+
+	static IDirectInput8* GetDirectInputInstance();
+
+protected:
+
+private:
+
+   //Member Variables
+public:
+
+protected:
+
+	static IDirectInput8* m_pDirectInputInstance;
+	static int m_iNumControllers;
+
+	DescribeMe* m_DeviceDescription;
+
+	IDirectInput8* m_pLocalDirectInputInstance;
+	IDirectInputDevice8* m_pDevice;
+
+	DWORD m_Devclass;
+
+	wchar_t m_myName[kiMAX_CHARS];
+	EControllerType m_ControllerType;
+
+private:
+
+};
+
+#endif // SPACESHOOTER3D_DIRECTINPUTCONTROLLER_H
+
+
+

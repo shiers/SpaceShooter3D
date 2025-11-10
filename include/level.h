@@ -1,0 +1,179 @@
+﻿#pragma once
+
+#ifndef __LEVEL_H__
+#define __LEVEL_H__
+
+// Library Includes
+#include <d3dx9.h>
+
+// Local Includes
+#include "defines.h"
+
+// Types
+
+// Constants
+
+// Prototypes
+class CEntityManager;
+class CPlayer;
+class CEnemy;
+class CExplosion;
+class CBullet;
+class CShield;
+class CPowerUp;
+class CMesh;
+class CHud;
+class CPointLight;
+class CDirectionalLight;
+class CINIParser;
+class CTopDownCamera;
+class CBackDrop;
+class CHighScore;
+
+class CLevel
+{
+	// Member Functions
+public:
+	CLevel();
+	~CLevel();
+
+	bool Initialise(UInt8 _ucNumOfPlayers, CTopDownCamera** _arraypCameras, CD3DRenderer* _pRenderer);
+	bool InitialisePlayers(CTopDownCamera** _arraypCameras);
+	bool InitialiseBullets();
+	bool InitialiseExplosions();
+	void InitialiseEnemies();
+	void InitialisePowerUps();
+	void InitialiseShields();
+	
+	void Process(Float32 _fDeltaTick);
+	void Draw();
+
+	void LoadVariables();
+
+	void CreatePlayers();
+
+	void CreateEnemies();
+
+	void CreateHud();
+	
+	void ProcessPlayers(Float32  _fDeltaTick);
+	void ProcessEnemies(Float32  _fDeltaTick);
+	void ProcessHUD(Float32  _fDeltaTick);
+	void ProcessPowerUps(Float32  _fDeltaTick);
+	void ProcessBullets(Float32  _fDeltaTick);
+	void ProcessExplosions(Float32  _fDeltaTick);
+	void ProcessLights(Float32  _fDeltaTick);
+	void ProcessShields(Float32 _fDeltaTick);
+
+	void SpawnPowerUp(UInt32 _uiIndex);
+
+	D3DXVECTOR3 GetGoodEnemyPosition();
+protected:
+
+	void RemakeLevel();	
+
+	void DestroyEnemy(UInt32 _iIndex);
+	void DestroyPlayer(UInt8 _iIndex);
+
+private:
+
+	// Member Variables
+public:
+
+protected:
+
+private:
+
+	CEntityManager* m_pEntityManager;
+	CD3DRenderer* m_pRenderer;
+	CINIParser* m_pIniParser;
+
+	CPlayer* m_arraypPlayers;
+	UInt8 m_ucNumOfPlayers;
+	D3DXVECTOR3* m_arrayVec3PlayerStartPos;
+	Float32 m_fPlayerSpeed;
+	Float32 m_fPlayerFriction;
+	Float32 m_fPlayerTurnSpeed;
+	Float32 m_fPlayerReloadTime;
+
+	UInt8** m_pArrayLives;
+	UInt32** m_pArrayScores;
+	
+	std::vector<CExplosion*> m_vecpEnemyExplosions;
+	CExplosion* m_arraypPlayerExplosions;
+
+	CBullet* m_arraypPlayerBullets;
+	CBullet* m_arraypEnemyBullets;
+	UInt8 m_ucNumOfPlayerBullets;
+	UInt8 m_ucNumOfEnemyBullets;
+	Float32 m_fBulletSpeed;
+
+	CShield* m_arraypShields;
+	CPowerUp* m_arraypPowerUps;
+	UInt8 m_ucPowerUpDropRate;
+	UInt8 m_ucBulletSpawn;
+	UInt8 m_ucShieldSpawn;
+	UInt8 m_ucSpeedSpawn;
+	Float32 m_fPowerUpSpeed;
+	
+	Float32 m_fPlayAreaWidth;
+	Float32 m_fPlayAreaDepth;
+	Float32 m_fSafeZoneRadius;
+	Float32 m_fCameraHeight;
+
+	CBackDrop* m_pBackDrop;
+	
+	CHud* m_pHud;
+
+	// Lights
+	CDirectionalLight* m_pDirectionLight;
+	CPointLight* m_arraypPointLights;
+	
+	UInt16 m_usNumOfLevels;
+
+	Float32 m_fShieldPowerUpTime;
+	Float32 m_fBulletPowerUpTime;
+	UInt8 m_ucNumberOfLives;
+	UInt8 m_ucBulletNormalDamage;
+	UInt8 m_ucBulletPowerUpDamage;
+
+	std::vector<CEnemy*> m_vecpEnemies;
+	Float32 m_fNumSeekerEnemies;
+	Float32 m_fNumShooterEnemies;
+	Float32 m_fNumRandomEnemies;
+	UInt32 m_uiVectorIndex;
+
+	UInt8 m_ucSeekerEnemyLife;
+	UInt8 m_ucRandomEnemyLife;
+	UInt8 m_ucShooterEnemyLife;
+
+	UInt16 m_usSeekerEnemyScoreValue;
+	UInt16 m_usRandomEnemyScoreValue;
+	UInt16 m_usShooterEnemyScoreValue;
+
+	Float32 m_fSeekerSpeed;
+	Float32 m_fSeekerTurnSpeed;
+	Float32 m_fRandomSpeed;
+	Float32 m_fRandomTurnSpeed;
+	Float32 m_fShooterSpeed;
+	Float32 m_fShooterTurnSpeed;
+
+	Float32 m_fPrevNumSeekers;
+	Float32	m_fPrevNumShooters;
+	Float32	m_fPrevNumRandoms;
+
+	UInt16 m_usRandomReloadTime;
+	Float32 m_fEnemyReloadTime;
+	Float32 m_fEnemySpawnMultiplier;
+
+	RECT m_rectBoundary;
+
+	CHighScore* m_pHighScoreParser;
+
+	bool m_bHighScoreAdded;
+
+};
+#endif // __LEVEL_H__
+
+
+

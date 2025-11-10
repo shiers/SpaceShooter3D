@@ -1,0 +1,63 @@
+﻿#include "../include/messageprocessor.h"
+
+// This Includes
+#include "../include/BackDrop.h"
+
+// Static Variables
+
+// Static Function Prototypes
+
+// Implementation
+CBackDrop::CBackDrop()
+{
+}
+
+CBackDrop::~CBackDrop()
+{
+}
+
+/**
+*
+* This function initialises the level.
+*
+* @param _pFileName is the .x filename for the backdrop.
+* @param _pTextureFileName is the texture filename for the backdrop.
+* @param _pRenderer is a pointer to a CD3DRenderer that the 3d object will 
+*		 use to draw.
+* @param _fWidth is the width of the back drop.
+* @param _fDepth is the depth of the back drop.
+* @return Returns true if successful.
+*
+*/
+bool
+CBackDrop::Initialise(const WChar16 *_pFileName,
+                      const WChar16 *_pTextureFileName,
+                      CD3DRenderer *_pRenderer,
+                      Float32 _fWidth,
+                      Float32 _fDepth)
+{
+	bool bSuccess = true;
+
+	CMessageProcessor *m_pMessageProcessor = CMessageProcessor::GetInstance();
+	bSuccess = C3DObject::Initialise(_pFileName, _pTextureFileName, _pRenderer);
+
+	if (bSuccess)
+	{
+		// Scales the back drop's world matrix to the play area.
+		m_matWorld._11 = _fWidth;
+		m_matWorld._33 = _fDepth;
+	} else
+	{
+		if (!bSuccess)
+		{
+			// Error: C3DObject not initialised.
+			m_pMessageProcessor->SendMessage("ERROR: CBackDrop::Initialise - Did not initialise successfully.");
+			bSuccess = false;
+		}
+	}
+
+	return (bSuccess);
+}
+
+
+

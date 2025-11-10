@@ -1,0 +1,281 @@
+//
+//   Diploma of Interactive Gaming
+//   Game Development Faculty
+//   Media Design School
+//   Auckland
+//   New Zealand
+//   
+//   (c) 2008 Media Design School
+//   
+//   File Name      :   3dobject.cpp
+//   Description    :   A 3d object
+//   Author         :   Benjamin Maher
+//   Mail           :   DrEnzyme@gmail.com
+
+// Library Includes
+
+// Local Includes
+#include "d3drenderer.h"
+#include "mesh.h"
+
+// This Includes
+#include "3dobject.h"
+
+// Static Variables
+
+// Static Function Prototypes
+
+// Implementation
+
+C3DObject::C3DObject()
+: m_fYaw(0)
+, m_fPitch(0)
+, m_fRoll(0)
+, m_pMesh(0)
+{
+	D3DXMatrixIdentity(&m_matWorld);
+}
+
+C3DObject::~C3DObject()
+{
+	//Deconstructor.
+	delete m_pMesh;
+	m_pMesh = 0;
+}
+
+/**
+*
+* This function initialises the 3d object.
+*
+* @author: Benjamin Maher
+* @param _pMesh: A pointer to a CMesh object that the 3d object will draw.
+* @param _pRenderer: A pointer to a CD3DRenderer that the 3d object will 
+* use to draw.
+* @return Returns true if the function call succeeds.
+*
+*/
+bool
+C3DObject::Initialise(CMesh* _pMesh, CD3DRenderer* _pRenderer)
+{
+	bool bFailure = false;
+	m_pRenderer = _pRenderer;
+
+	if(_pMesh == 0)
+	{
+		bFailure = true;
+	}
+
+	m_pMesh = _pMesh;
+
+	return(!bFailure);
+}
+
+/**
+*
+* This function initialises the 3d object without a CMesh.
+*
+* @author: Benjamin Maher
+* @param _pFileName: A pointer to a .x file that the mesh resides in.
+* @param _pTextureFileName: A pointer to a texture file that the mesh will use.
+* @param _pRenderer: A pointer to a CD3DRenderer that the 3d object will 
+* use to draw.
+* @return Returns true if the function call succeeds.
+*
+*/
+bool
+C3DObject::Initialise(const WChar16* _pFileName, const WChar16* _pTextureFileName, CD3DRenderer* _pRenderer)
+{
+	bool bFailure = false;
+
+	m_pRenderer = _pRenderer;
+
+	if(!m_pMesh)
+	{
+		m_pMesh = new CMesh;
+	}
+	bFailure = !m_pMesh->Initialise(_pFileName, _pTextureFileName, m_pRenderer->GetDevice());
+	if(bFailure)
+	{
+		delete m_pMesh;
+		m_pMesh = 0;
+	}
+
+	return(!bFailure);
+}
+
+/**
+*
+* Sets the X, Y and Z coordinates of the object.
+*
+* @author: Benjamin Maher
+* @param _fX: The new X coordinate of the object.
+* @param _fY: The new Y coordinate of the object.
+* @param _fZ: The new Z coordinate of the object.
+* @return void.
+*
+*/
+void
+C3DObject::SetXYZ(Float32 _fX, Float32 _fY, Float32 _fZ)
+{
+	m_matWorld._41 = _fX;
+	m_matWorld._42 = _fY;
+	m_matWorld._43 = _fZ;
+}
+
+/**
+*
+* Returns the world matrix of the object.
+*
+* @author: Benjamin Maher
+* @return Returns the world matrix of the object.
+*
+*/
+D3DXMATRIX*
+C3DObject::GetMatrix()
+{
+	return(&m_matWorld);
+}
+
+/**
+*
+* Scales the object by a certain amount.
+*
+* @author: Benjamin Maher
+* @param _fAmount: the decimal amount that the object will be scaled by.
+* A value of 1 results in no change. Values greater than 1 result in growth
+* of the object and values less than 1 result in the object shrinking.
+* @return void.
+*
+*/
+void
+C3DObject::SetScale(Float32 _fAmount)
+{
+	m_matWorld._11 *= _fAmount;
+	m_matWorld._22 *= _fAmount;
+	m_matWorld._33 *= _fAmount;
+}
+
+/**
+*
+* Returns the X Coordinate of the object.
+*
+* @author: Benjamin Maher
+* @return Returns the X coordinate of the object.
+*
+*/
+Float32
+C3DObject::GetX()
+{
+	return(m_matWorld._41);
+}
+
+/**
+*
+* Returns the Y Coordinate of the object.
+*
+* @author: Benjamin Maher
+* @return Returns the X coordinate of the object.
+*
+*/
+Float32
+C3DObject::GetY()
+{
+	return(m_matWorld._42);
+}
+
+/**
+*
+* Returns the Z Coordinate of the object.
+*
+* @author: Benjamin Maher
+* @return Returns the X coordinate of the object.
+*
+*/
+Float32
+C3DObject::GetZ()
+{
+	return(m_matWorld._43);
+}
+
+/**
+*
+* Draws the 3d object's mesh
+*
+* @author: Benjamin Maher
+* @return: void.
+*
+*/
+void
+C3DObject::Draw()
+{
+	m_pRenderer->SetWorldMatrix(m_matWorld);
+	m_pMesh->Draw();
+}
+
+/**
+*
+* Processes the 3d object.
+*
+* @author: Benjamin Maher
+* @return: void.
+*
+*/
+void
+C3DObject::Process(Float32 _fDeltaTick)
+{
+	D3DXMATRIX matRotation;
+	D3DXMatrixRotationYawPitchRoll(&matRotation, 
+									m_fYaw * _fDeltaTick, 
+									m_fPitch * _fDeltaTick, 
+									m_fRoll * _fDeltaTick);
+	D3DXMatrixMultiply(&m_matWorld, &matRotation, &m_matWorld);
+}
+
+/**
+*
+* Yaws the object by a specified amount.
+*
+* @author: Benjamin Maher
+* @param _fAmount: the amount in Radians that the object will 
+* be yawed by.
+* @return: void.
+*
+*/
+void
+C3DObject::Yaw(Float32 _fAmount)
+{
+	m_fYaw = _fAmount;
+}
+
+/**
+*
+* Pitches the object by a specified amount.
+*
+* @author: Benjamin Maher
+* @param _fAmount: the amount in Radians that the object will 
+* be pitched by.
+* @return: void.
+*
+*/
+void
+C3DObject::Pitch(Float32 _fAmount)
+{
+	m_fPitch = _fAmount;
+}
+
+/**
+*
+* Rolls the object by a specified amount.
+*
+* @author: Benjamin Maher
+* @param _fAmount: the amount in Radians that the object will 
+* be rolled by.
+* @return: void.
+*
+*/
+void
+C3DObject::Roll(Float32 _fAmount)
+{
+	
+	m_fRoll = _fAmount;
+}

@@ -1,0 +1,21 @@
+-----------
+LOG STARTED
+-----------
+GAME:Initialised Logging Successfully.
+GAME:Initialising Viewports...
+GAME:Initialised Viewport Successfully.
+GAME:Initialising Input...
+GAME:Initialised Input Successfully.
+GAME:Initialising Level...
+GAME:     TITLESCREEN: Title screen mesh initialised successfully.
+GAME:     TITLESCREEN: Target mesh initialised successfully.
+GAME:Initialised Level Successfully.
+INPUT: Device Regained.
+INPUT: Device Regained.
+GAME:     TITLESCREEN: Menu Selection Incremented.
+GAME:     TITLESCREEN: Menu Selection Decremented.
+GAME:     TITLESCREEN: Menu Selection Incremented.
+GAME:     TITLESCREEN: Menu Selection Decremented.
+-------
+END LOG
+-------

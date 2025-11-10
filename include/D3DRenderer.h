@@ -1,0 +1,96 @@
+﻿#pragma once
+
+#ifndef __IGAPR08_IG300_D3DRENDERER_H__
+#define __IGAPR08_IG300_D3DRENDERER_H__
+
+// Library Includes
+#include <windows.h>
+#include <d3d9.h>
+#include <d3dx9.h>
+#include <map>
+
+// Local Includes
+#include "defines.h"
+#include "renderer.h"
+
+// Types
+typedef enum
+{
+	INVALID_FOG_SETTING = -1,
+	FOG_START = 100,
+	FOG_END = 300,
+	MAX_FOG_SETTING,
+}EFogSetting;
+
+// Constants
+const Float32 kfFOG_DENSITY = 0.6f;
+const D3DCOLOR defaultClearColour = D3DCOLOR_XRGB(0,0,0);
+
+// Prototypes
+
+class CD3DRenderer : public IRenderer
+{
+   //Member Functions
+public:
+	CD3DRenderer();
+	~CD3DRenderer();
+
+	virtual bool Initialise(Int32 _iWidth, Int32 _iHeight, HWND _hWindow, bool _bFullscreen);
+	virtual bool Shutdown();
+
+	virtual void SetClearColour(Float32 _fRed, Float32 _fGreen, Float32 _fBlue);
+
+	virtual void Clear(bool _bTarget, bool _bDepth, bool _bStencil);
+
+	virtual void StartRender(bool _bTarget, bool _bDepth, bool _bStencil);
+
+	virtual void EndRender();
+	virtual void CalculateProjectionMatrix(Float32 _fFov, Float32 _fNear, Float32 _fFar);
+	virtual void CalculateOrthogonalMatrix(Float32 _fNear, Float32 _fFar);
+
+	virtual void SetWorldMatrix(D3DXMATRIX& _rWorld);
+	virtual void SetViewMatrix(D3DXMATRIX& _rView);
+	virtual void SetProjectionMatrix(D3DXMATRIX& _rProjection);
+
+	virtual D3DXMATRIX& GetProjectionMatrix();
+	virtual D3DXMATRIX& GetViewMatrix();
+	virtual D3DXMATRIX& GetWorldMatrix();
+
+	IDirect3DDevice9* GetDevice();
+
+	virtual void DumpBackBufferToDisk(const Int8* _pcFilename);
+	virtual void SetFog(bool _bFogState);
+
+protected:
+
+private:
+	void PopulateParams(D3DPRESENT_PARAMETERS& _myParams, Int32 _height, Int32 _width, HWND _hWnd, bool _bFullScreen);
+
+   //Member Variables
+public:
+
+protected:
+
+private:
+	HWND m_hWindow;
+	IDirect3D9* m_pDirect3D;
+	IDirect3DDevice9* m_pDevice;
+	D3DCOLOR m_clearColour;
+	Int32 m_iScreenWidth;
+	Int32 m_iScreenHeight;
+	D3DXMATRIX m_matWorld;
+	D3DXMATRIX m_matView;
+	D3DXMATRIX m_matProjection;
+	bool m_bFullScreen;
+	bool m_bRenderingScene;
+	bool m_bScreenCleared;
+	bool m_bShutDown;
+	float m_fFogStart;
+	float m_fFogEnd;
+
+};
+
+#endif //__IGAPR08_IG300_D3DRENDERER_H__
+
+
+

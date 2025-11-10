@@ -1,0 +1,270 @@
+﻿#include "../include/messageprocessor.h"
+
+// This Includes
+#include "../include/xinputcontroller.h"
+
+// Static Variables
+bool CXInputController::s_bIsRumble = false;
+bool CXInputController::s_bIsRegistered = false;
+
+// Static Function Prototypes
+
+// Implementation
+CXInputController::CXInputController()
+	: m_uiID(0)
+	  , m_ucNumOfControllers(0)
+	  , m_uiPacketNumber(0)
+	  , m_fLeftStickX(0.0f)
+	  , m_fLeftStickY(0.0f)
+	  , m_iLeftStickDeadZone(0)
+	  , m_fRightStickX(0.0f)
+	  , m_fRightStickY(0.0f)
+	  , m_iRightStickDeadZone(0)
+	  , m_fLeftTrigger(0.0f)
+	  , m_fRightTrigger(0.0f)
+	  , m_fButtonStates(0.0f)
+	  , m_usLeftRumble(0)
+	  , m_usRightRumble(0)
+{
+	ZeroMemory(&m_ControllerState, sizeof(XINPUT_STATE));
+	ZeroMemory(&m_XInputInformation, sizeof(XInputInformation));
+}
+
+CXInputController::~CXInputController()
+{
+}
+
+/**
+*
+* This function initialises the Xbox 360 Controller.
+*
+* @param _uiID This is the controller ID.
+* @return Returns true if successful.
+*
+*/
+bool
+CXInputController::Initialise(UInt32 _uiID)
+{
+	m_uiID = _uiID;
+
+	if (!s_bIsRegistered)
+	{
+		s_bIsRegistered = true;
+
+		CMessageProcessor::GetInstance()->
+				RegisterForMessage(MESSAGE_XINPUT_CONTROLLER_RUMBLE_ON,
+				                   TurnRumbleFlagOn);
+
+		CMessageProcessor::GetInstance()->
+				RegisterForMessage(MESSAGE_XINPUT_CONTROLLER_RUMBLE_OFF,
+				                   TurnRumbleFlagOff);
+	}
+
+
+	return (true);
+}
+
+/**
+*
+* This function is resposible for doing any processing that the
+* XBox 360 Controller requires.
+*
+* @param _fDeltaTick is the amount of time elapsed between frames.
+* @return Returns void.
+*
+*/
+void
+CXInputController::Process(Float32 _fDeltatick)
+{
+	GetControllerState();
+
+	SetRumble(s_bIsRumble);
+}
+
+/**
+*
+* This function gets the state of the Xbox 360 controller.
+*
+* @return Returns void.
+*
+*/
+void
+CXInputController::GetControllerState()
+{
+	DWORD dwResult;
+
+	ZeroMemory(&m_ControllerState, sizeof(XINPUT_STATE));
+
+	dwResult = XInputGetState(m_uiID, &m_ControllerState);
+
+	if (dwResult == ERROR_SUCCESS)
+	{
+		// Update the member variables.
+		m_uiPacketNumber = m_ControllerState.dwPacketNumber;
+		CheckTriggerPresses();
+		CheckControllerDeadZone();
+		SetThumbStickValues();
+	} else
+	{
+		// Log Error.
+	}
+}
+
+/**
+*
+* This function checks the trigger buttons.
+*
+* @return Returns void.
+*
+*/
+void
+CXInputController::CheckTriggerPresses()
+{
+	if (m_ControllerState.Gamepad.bRightTrigger &&
+	    m_ControllerState.Gamepad.bRightTrigger <
+	    XINPUT_GAMEPAD_TRIGGER_THRESHOLD)
+	{
+		// Do whatever you want to happen when a trigger is used here
+		// the value stored in state.Gamepad.bRightTrigger is the amount
+		// that the trigger is being pressed. Between 0-255.
+	}
+}
+
+/**
+*
+* This function checks the controller deadzone.
+*
+* @return Returns void.
+*
+*/
+void
+CXInputController::CheckControllerDeadZone()
+{
+	// Controller is connected
+
+	// Check to make sure we are not moving during the dead zone
+
+	if (m_ControllerState.Gamepad.sThumbLX < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+	    m_ControllerState.Gamepad.sThumbLX > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+	    m_ControllerState.Gamepad.sThumbLY < XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE &&
+	    m_ControllerState.Gamepad.sThumbLY > -XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE)
+	{
+		m_ControllerState.Gamepad.sThumbLX = 0;
+		m_ControllerState.Gamepad.sThumbLY = 0;
+	}
+
+	if (m_ControllerState.Gamepad.sThumbRX < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE &&
+	    m_ControllerState.Gamepad.sThumbRX > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE &&
+	    m_ControllerState.Gamepad.sThumbRY < XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE &&
+	    m_ControllerState.Gamepad.sThumbRY > -XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE)
+	{
+		m_ControllerState.Gamepad.sThumbRX = 0;
+		m_ControllerState.Gamepad.sThumbRY = 0;
+	}
+}
+
+/**
+*
+* This function sets the thumb stick values and sends a message to the
+* message processor stating the controller movement.
+*
+* @return Returns void.
+*
+*/
+void
+CXInputController::SetThumbStickValues()
+{
+	m_fLeftStickX = static_cast<Float32>(m_ControllerState.Gamepad.sThumbLX) / kfMaxAxisValue;
+	m_fLeftStickY = static_cast<Float32>(m_ControllerState.Gamepad.sThumbLY) / kfMaxAxisValue;
+
+	m_fRightStickX = static_cast<Float32>(m_ControllerState.Gamepad.sThumbRX) / kfMaxAxisValue;
+	m_fRightStickY = static_cast<Float32>(m_ControllerState.Gamepad.sThumbRY) / kfMaxAxisValue;
+
+	m_XInputInformation.fLeftControllerX = m_fLeftStickX;
+	m_XInputInformation.fLeftControllerY = m_fLeftStickY;
+	m_XInputInformation.fRightControllerX = m_fRightStickX;
+	m_XInputInformation.fRightControllerY = m_fRightStickY;
+	int temp = m_ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_A;
+	if (temp)
+	{
+		m_XInputInformation.bAButton = true;
+	} else
+	{
+		m_XInputInformation.bAButton = false;
+	}
+	temp = m_ControllerState.Gamepad.wButtons & XINPUT_GAMEPAD_BACK;
+	if (temp)
+	{
+		m_XInputInformation.bBackButton = true;
+	} else
+	{
+		m_XInputInformation.bBackButton = false;
+	}
+
+	CMessageProcessor::GetInstance()->SetXInputControllerState(m_uiID, &m_XInputInformation);
+}
+
+/**
+*
+* This function sets the rumble flag to true.
+*
+* @return Returns void.
+*
+*/
+void
+CXInputController::TurnRumbleFlagOn()
+{
+	s_bIsRumble = true;
+}
+
+/**
+*
+* This function sets the rumble flag to false.
+*
+* @return Returns void.
+*
+*/
+void
+CXInputController::TurnRumbleFlagOff()
+{
+	s_bIsRumble = false;
+}
+
+/**
+*
+* This function checks turns rumble on or off.
+* @param _bIsRumble is a flag that determines if rumble should be turned on
+*		 or off.
+* @return Returns void.
+*
+*/
+void
+CXInputController::SetRumble(bool _bIsRumble)
+{
+	XINPUT_VIBRATION controlVibeOn;
+	ZeroMemory(&controlVibeOn, sizeof(XINPUT_VIBRATION));
+	controlVibeOn.wLeftMotorSpeed = 65535;
+	controlVibeOn.wRightMotorSpeed = 65535;
+
+	XINPUT_VIBRATION controlVibeOff;
+	ZeroMemory(&controlVibeOff, sizeof(XINPUT_VIBRATION));
+	controlVibeOff.wLeftMotorSpeed = 0;
+	controlVibeOff.wRightMotorSpeed = 0;
+
+	if (_bIsRumble)
+	{
+		// Turn rumble ON.
+
+		XInputSetState(m_uiID, &controlVibeOn);
+	} else
+	{
+		if (!_bIsRumble)
+		{
+			// Turn rumble OFF
+			XInputSetState(m_uiID, &controlVibeOff);
+		}
+	}
+}
+
+
+

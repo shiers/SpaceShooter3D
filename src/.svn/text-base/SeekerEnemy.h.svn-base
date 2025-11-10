@@ -1,0 +1,57 @@
+//
+// Diploma of Interactive Gaming
+// Game Development Faculty
+// Media Design School
+// Auckland
+// New Zealand
+// 
+// (c) 2008 Media Design School
+// 
+// File Name      :   SeekerEnemy.h
+// Description    :   An enemy that moves towards the player
+// Author         :   Shawn Shiers
+// Mail           :   shawn@dryad.ca
+// 
+
+#pragma once
+
+#ifndef __SEEKERENEMY_H__
+#define __SEEKERENEMY_H__
+
+// Library Includes
+
+// Local Includes
+#include "enemy.h"
+#include "defines.h"
+
+// Types
+
+// Constants
+
+// Prototypes
+
+class CSeekerEnemy : public CEnemy
+{
+	// Member Functions
+public:
+	CSeekerEnemy();
+	~CSeekerEnemy();
+
+	void Process(Float32 _fDeltaTick);
+	virtual bool IsReadyToShoot();
+	
+protected:
+
+private:
+
+	// Member Variables
+public:
+
+protected:
+	UInt8 m_ucSeekerEnemyLife;
+	static UInt16 m_usSeekerEnemyValue;
+
+private:
+
+};
+#endif // __SEEKERENEMY_H__

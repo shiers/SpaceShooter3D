@@ -1,0 +1,574 @@
+//
+// Diploma of Interactive Gaming
+// Game Development Faculty
+// Media Design School
+// Auckland
+// New Zealand
+// 
+// (c) 2008 Media Design School
+// 
+// File Name      :   igcamera.cpp
+// Description    :   Camera system
+// Author         :   Shawn Shiers
+// Mail           :   shawn@dryad.ca
+//
+
+// Library Includes
+#include <cassert>
+
+// Local Includes
+#include "viewport.h"
+#include "renderer.h"
+#include "game.h"
+
+// This Includes
+#include "igcamera.h"
+
+// Static Variables
+
+// Static Function Prototypes
+
+// Implementation
+CIGCamera::CIGCamera()
+: m_pRenderer(0)
+, m_pViewport(0)
+, m_eMode(INVALID_CAMERAMODE)
+, m_eType(INVALID_CAMERATYPE)
+, m_fFOV(0.0f)
+, m_fAspectRatio(0.0f)
+, m_fNearClip(0.0f)
+, m_fFarClip(0.0f)
+{
+	
+}
+
+CIGCamera::~CIGCamera()
+{
+
+}
+
+/**
+*
+* This function initialises the camera system.
+*
+* @author Shawn Shiers
+* @param _pViewport This is the Viewport.
+* @param _fFOV This is the Field of view.
+* @param _eMode This is the Camera Mode (ie. Perspective).
+* @param _eType This is the type of camera (ie. Debug).
+* @param _fNearClip This is the the Near clipping value.
+* @param _fFarClip This is the Far clipping value.
+* @param _uiID This is the camera ID.
+* @return Returns true if successful.
+*
+*/
+bool
+CIGCamera::Initialise(IViewport* _pViewport,
+					  Float32 _fFOV,
+					  ECameraMode _eMode,
+					  ECameraType _eType,
+					  Float32 _fNearClip,
+					  Float32 _fFarClip,
+					  UInt32 _uiID,
+					  IRenderer* _pRenderer)
+{
+	// Asset on a valid _pViewport pointer.
+	assert(_pViewport);
+
+	assert(_pRenderer);
+
+	m_pRenderer = _pRenderer;
+
+	// Set all members.
+	m_pViewport = _pViewport;
+	SetFOV(_fFOV);
+	SetMode(_eMode);
+	SetType(_eType);
+	SetClipPlanes(_fNearClip, _fFarClip);
+	m_uiID = _uiID;
+
+	m_fAspectRatio = static_cast<Float32>(m_pViewport->GetWidth()) /
+				     static_cast<Float32>(m_pViewport->GetHeight());
+
+	D3DXMATRIX matView;
+	D3DXMatrixIdentity(&matView);
+	SetViewMatrix(matView);
+	SetWorldMatrix(matView);
+
+	// Call reset matrices.
+	ResetMatrices();
+	return (true);
+}
+
+/**
+*
+* This function is resposible for doing any processing that the camera
+* requires.
+*
+* @author Shawn Shiers
+* @param _fDeltaTick is the amount of time elapsed between frames.
+* @return Returns void.
+*
+*/
+void
+CIGCamera::Process (Float32 _fDeltaTick)
+{
+	// Future Implementaion.
+}
+
+/**
+*
+* This function sets the clipping planes.
+*
+* @author Shawn Shiers
+* @param _fNear This is the the Near clipping value.
+* @param _fFar This is the the Far clipping value.
+* @return Returns void.
+*
+*/
+void
+CIGCamera::SetClipPlanes(Float32 _fNear,
+						 Float32 _fFar)
+{
+	// Set members.
+	m_fNearClip = _fNear;
+	m_fFarClip = _fFar;
+	
+	//Make sure they make sense!
+}
+
+/**
+*
+* This function gets the near clipping plane.
+*
+* @author Shawn Shiers
+* @return Returns the near clipping plane.
+*
+*/
+Float32 
+CIGCamera::GetNearPlane() const
+{
+	return (m_fNearClip);
+}
+
+/**
+*
+* This function gets the far clipping plane.
+*
+* @author Shawn Shiers
+* @return Returns the far clipping plane.
+*
+*/
+Float32
+CIGCamera::GetFarPlane() const
+{
+	return (m_fFarClip);
+}
+
+/**
+*
+* This function sets the Field of view.
+*
+* @author Shawn Shiers
+* param _fFOV this is the Field of view value
+* @return Returns void.
+*
+*/
+void
+CIGCamera::SetFOV(Float32 _fFOV)
+{
+	// Set members.
+	m_fFOV = _fFOV;
+
+	// Call reset matrices.
+	ResetMatrices();
+}
+
+/**
+*
+* This function sets the view matrix.
+*
+* @author Shawn Shiers
+* param _rvectRight is the right vector
+* param _rvectUp is the up vector
+* param _rvectDir is the direction vector
+* param _rvectPos is the position vector
+* @return Returns void.
+*
+*/
+void 
+CIGCamera::SetView3D(D3DXVECTOR3& _rvectRight,
+					 D3DXVECTOR3& _rvectUp,
+					 D3DXVECTOR3& _rvectDir,
+					 D3DXVECTOR3& _rvectPos)
+{
+	// Populate View Matrix.
+	m_matView._11 = _rvectRight.x;
+	m_matView._21 = _rvectRight.y;
+	m_matView._31 = _rvectRight.z;
+
+	m_matView._12 = _rvectUp.x;
+	m_matView._22 = _rvectUp.y;
+	m_matView._32 = _rvectUp.z;
+
+	m_matView._13 = _rvectDir.x;
+	m_matView._23 = _rvectDir.y;
+	m_matView._33 = _rvectDir.z;
+
+	D3DXVec3Cross(&m_vecPosition, &_rvectPos, &m_vecPosition);
+
+	m_matView._41 = m_vecPosition.x;
+	m_matView._42 = m_vecPosition.y;
+	m_matView._43 = m_vecPosition.z;
+
+	// Send the View Matrix to the rendering device.
+	SetViewMatrix(m_matView);
+}
+
+/**
+*
+* This function converts between LookAt and setting the 3D view.
+*
+* @author Shawn Shiers
+* param _rvectPos is the position vector
+* param _rvectLook is the look vector
+* param _rvectUp is the up vector
+* @return Returns void.
+*
+*/
+void
+CIGCamera::SetViewLookAt(D3DXVECTOR3& _rvectPos,
+						 D3DXVECTOR3& _rvectLook,
+						 D3DXVECTOR3& _rvectUp)
+{
+// Convert between LookAt and setting the 3D view.
+
+	// Calculate the Dir vector.
+	D3DXVECTOR3 vecDir;
+	D3DXVec3Subtract(&vecDir, &_rvectLook, &m_vecPosition);
+
+	// Calculate the Right vector.
+	D3DXVECTOR3 vecRight;
+	D3DXVec3Cross(&vecRight, &_rvectLook, &_rvectUp);
+
+	// Calculate the Up vector.
+	// Done.
+
+	// Call Set3DView.
+	SetView3D(vecRight, _rvectUp, vecDir, m_vecPosition);
+}
+
+/**
+*
+* This function sets the world matrix.
+*
+* @author Shawn Shiers
+* param _rmatWorld is a reference to a D3DXMATRIX
+* @return Returns void.
+*
+*/
+void
+CIGCamera::SetWorldMatrix(D3DXMATRIX& _rmatWorld)
+{
+	// Store the world matrix.
+	m_matWorld = _rmatWorld;
+
+	// Calculate the World View Projection matrix.
+	CalcWorldViewProj();
+
+	// Set the world matrix on the rendering device.
+	m_pRenderer->SetWorldMatrix(m_matWorld);
+}
+
+/**
+*
+* This function sets the view matrix.
+*
+* @author Shawn Shiers
+* param _rmatView is a reference to a D3DXMATRIX
+* @return Returns void.
+*
+*/
+void
+CIGCamera::SetViewMatrix(D3DXMATRIX& _rmatView)
+{
+	// Store the view matrix.
+	m_matView = _rmatView;
+
+	// Calculate the World View Projection matrix.
+	CalcWorldViewProj();
+
+	// Set the view matrix on the rendering device.
+	m_pRenderer->SetViewMatrix(m_matView);
+}
+
+/**
+*
+* This function sets the projection matrix.
+*
+* @author Shawn Shiers
+* param _rmatProj is a reference to a D3DXMATRIX
+* @return Returns void.
+*
+*/
+void
+CIGCamera::SetProjMatrix(D3DXMATRIX& _rmatProj)
+{
+	// Store the projection matrix.
+	m_matProj = _rmatProj;
+
+	// Calculate the World View Projection matrix.
+	CalcWorldViewProj();
+
+	// Set the projection matrix on the rendering device.
+	m_pRenderer->SetProjectionMatrix(m_matProj);
+}
+
+/**
+*
+* This function sets the camera mode.
+*
+* @author Shawn Shiers
+* @param _eMode This is the Camera Mode (ie. Perspective).
+* @return Returns void.
+*
+*/
+void
+CIGCamera::SetMode(ECameraMode _eMode)
+{
+	// Set the mode.
+	m_eMode = _eMode;
+
+	// Call ResetMatrices.
+	ResetMatrices();
+}
+
+/**
+*
+* This function sets the camera type.
+*
+* @author Shawn Shiers
+* @param _eType This is the type of camera (ie. Debug).
+* @return Returns void.
+*
+*/
+void
+CIGCamera::SetType(ECameraType _eType)
+{
+	m_eType = _eType;
+}
+
+/**
+*
+* This function calculates the View Projection matrix.
+*
+* @author Shawn Shiers
+* @return Returns void.
+*
+*/
+void
+CIGCamera::CalcViewProj()
+{
+	// Calculate the View Projection matrix.
+}
+
+/**
+*
+* This function calculates the World View Projection matrix.
+*
+* @author Shawn Shiers
+* @return Returns void.
+*
+*/
+void
+CIGCamera::CalcWorldViewProj()
+{
+	// Calculate the World View Projection matrix.
+}
+
+/**
+*
+* This function resets the matrices.
+*
+* @author Shawn Shiers
+* @return Returns void.
+*
+*/
+void
+CIGCamera::ResetMatrices()
+{
+	// Switch on the mode.
+	switch (m_eMode)
+	{
+		// Call the appropriate method.
+		case CAMMODE_ORTHOGONAL:
+		{
+			Reset2DMatrices();
+		}
+		break;
+
+		case CAMMODE_PERSPECTIVE:
+		{
+			Reset3DMatrices();
+		}
+		break;
+
+		default:
+		{
+			// Log Error.
+		}
+	}
+
+	UpdateRenderer();
+}
+
+/**
+*
+* This function resets the 3D matrices.
+*
+* @author Shawn Shiers
+* @return Returns void.
+*
+*/
+void
+CIGCamera::Reset3DMatrices()
+{
+	// Use D3DX to create projection matrices.
+
+	// Depending on the mode...
+	// Call D3DXMatrixOrthoLH or D3DXMatrixPerspectiveFovLH.
+	D3DXMatrixPerspectiveFovLH(&m_matProj, m_fFOV, m_fAspectRatio, m_fNearClip, m_fFarClip);
+
+	// Set the Projection matrix on the rendering device.
+	if (m_pRenderer)
+	{
+		m_pRenderer->SetProjectionMatrix(m_matProj);
+	}
+}
+
+/**
+*
+* This function resets the 2D matrices.
+*
+* @author Shawn Shiers
+* @return Returns void.
+*
+*/
+void
+CIGCamera::Reset2DMatrices()
+{
+	// Create a normal Ortho Projection matrix...
+	// Using D3DXMatrixOrthoLH.
+
+	D3DXMatrixOrthoLH(&m_matProj,
+					  static_cast<Float32>(m_pViewport->GetWidth()),
+					  static_cast<Float32>(m_pViewport->GetHeight()),
+					  m_fNearClip,
+					  m_fFarClip);
+
+	// Create a view matrix.
+
+	// Set the world matrix to identity.
+	D3DXMatrixIdentity(&m_matWorld);
+
+	// Call the UpdateRenderer method.
+	UpdateRenderer();
+}
+
+/**
+*
+* This function gets the position of the camera.
+*
+* @author Shawn Shiers
+* @return Returns a reference to a D3DXVECTOR3.
+*
+*/
+D3DXVECTOR3&
+CIGCamera::GetPosition()
+{
+	return (m_vecPosition);
+}
+
+/**
+*
+* This function gets the View matrix.
+*
+* @author Shawn Shiers
+* @return Returns a pointer to a D3DXMATRIX.
+*
+*/
+D3DXMATRIX*
+CIGCamera::GetViewMatrix()
+{
+	return (&m_matView);
+}
+
+/**
+*
+* This function gets the Projection matrix.
+*
+* @author Shawn Shiers
+* @return Returns a pointer to a D3DXMATRIX.
+*
+*/
+D3DXMATRIX*
+CIGCamera::GetProjMatrix()
+{
+	return (&m_matProj);
+}
+
+/**
+*
+* This function gets the World matrix.
+*
+* @author Shawn Shiers
+* @return Returns a pointer to a D3DXMATRIX.
+*
+*/
+D3DXMATRIX*
+CIGCamera::GetWorldMatrix()
+{
+	return (&m_matWorld);
+}
+
+/**
+*
+* This function updates the renderer.
+*
+* @author Shawn Shiers
+* @return Returns void.
+*
+*/
+void
+CIGCamera::UpdateRenderer()
+{
+	// Set the view matrix.
+	m_pRenderer->SetViewMatrix(m_matView);
+
+	// Set the projection matrix.
+	m_pRenderer->SetProjectionMatrix(m_matProj);
+
+	// Set the world matrix.
+	m_pRenderer->SetWorldMatrix(m_matWorld);
+}
+
+/**
+*
+* Recalculates the projection Matrix.
+*
+* @author Benjamin Maher
+*
+*/
+void
+CIGCamera::RecalculateProjection()
+{
+	m_fAspectRatio = static_cast<Float32>(m_pViewport->GetWidth()) /
+				     static_cast<Float32>(m_pViewport->GetHeight());
+	D3DXMatrixPerspectiveFovLH(&m_matProj, m_fFOV, m_fAspectRatio, m_fNearClip, m_fFarClip);
+
+	// Set the Projection matrix on the rendering device.
+	if (m_pRenderer)
+	{
+		m_pRenderer->SetProjectionMatrix(m_matProj);
+	}
+}

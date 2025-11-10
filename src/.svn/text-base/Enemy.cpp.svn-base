@@ -1,0 +1,265 @@
+//
+// Diploma of Interactive Gaming
+// Game Development Faculty
+// Media Design School
+// Auckland
+// New Zealand
+// 
+// (c) 2008 Media Design School
+// 
+// File Name      :   Enemy.cpp
+// Description    :   An Interface for creating enemies
+// Author         :   Shawn Shiers
+// Mail           :   shawn@dryad.ca
+//
+
+// Library Includes
+
+// Local Includes
+
+// This Includes
+#include "Enemy.h"
+
+// Static Variables
+
+// Static Function Prototypes
+
+// Implementation
+
+CEnemy::CEnemy()
+: m_pmatPointToFollow(0)
+, m_ucLife(0)
+, m_fCurrentRefireRate(0.0f)
+, m_sEnemyPointValue(0)
+, m_fMaxRefireRate(0.0f)
+, m_ucMaxLife(0)
+{
+	//Constructor
+}
+
+CEnemy::~CEnemy()
+{
+	//Deconstructor.
+}
+
+/**
+*
+* This function initialises the Enemy.
+*
+* @author Shawn Shiers
+* @param 
+* @return Returns true if successful.
+*
+*/
+bool
+CEnemy::Initialise(D3DXMATRIX* _pmatPointToFollow,
+							D3DXVECTOR3 _vec3Position,
+							const WChar16* _pcXFileName, 
+							const WChar16* _pcTextureFileName,
+							CD3DRenderer* _pRenderer,
+							Float32 _fSpeed, 
+							Float32 _fTurnSpeed, 
+							UInt8 _ucLife,
+							Float32 _fRefireRate,
+							Int16 _sEnemyPointValue,
+							bool _bIsActive)
+{
+	bool bFailure = false;
+
+	m_vec3Position = _vec3Position;
+
+	m_pmatPointToFollow = _pmatPointToFollow;
+	m_matWorld._41 = _vec3Position.x;
+	m_matWorld._42 = _vec3Position.y;
+	m_matWorld._43 = _vec3Position.z;
+
+	m_bIsActive = _bIsActive;
+
+	m_fSpeed = _fSpeed;
+	m_fTurnSpeed = _fTurnSpeed;
+
+	m_ucMaxLife = _ucLife;
+	m_ucLife = m_ucMaxLife;
+	m_fMaxRefireRate = _fRefireRate;
+
+	m_sEnemyPointValue = _sEnemyPointValue;
+
+	if(!m_pMesh)
+	{
+		bFailure = !CDynamicEntity::Initialise(_pcXFileName, _pcTextureFileName, _pRenderer);
+	}
+
+	return(!bFailure);
+}
+
+bool 
+CEnemy::Initialise(D3DXMATRIX* _pmatPointToFollow,
+				D3DXVECTOR3 _vec3Position,
+				bool _bIsActive)
+{
+	bool bFailure = false;
+
+	m_ucLife = m_ucMaxLife;
+
+	m_vec3Position = _vec3Position;
+
+	m_pmatPointToFollow = _pmatPointToFollow;
+	m_matWorld._41 = _vec3Position.x;
+	m_matWorld._42 = _vec3Position.y;
+	m_matWorld._43 = _vec3Position.z;
+
+	m_bIsActive = _bIsActive;
+
+	return(!bFailure);
+}
+
+/**
+*
+* This function is resposible for doing any processing that the Enemy
+* requires.
+*
+* @author Shawn Shiers
+* @param _fDeltaTick is the amount of time elapsed between frames.
+* @return Returns void.
+*
+*/
+
+void
+CEnemy::Process(float _fDeltaTick)
+{
+	if(m_bIsActive)
+	{
+		CDynamicEntity::Process(_fDeltaTick);
+		if(m_fCurrentRefireRate > 0.0f)
+		{
+			m_fCurrentRefireRate -= _fDeltaTick;
+		}
+
+		if(m_ucLife <= 0)
+		{
+			m_bIsActive = false;
+		}
+	}
+}
+
+/**
+*
+* This function draws an enemy.
+* @author Shawn Shiers
+* @return Returns void.
+*
+*/
+void
+CEnemy::Draw()
+{
+	if(m_bIsActive)
+	{
+		CDynamicEntity::Draw();
+	}
+}
+
+/**
+*
+* This function informs the calling function if an enemy is able to shoot.
+* @author Shawn Shiers
+* @param
+* @return Returns a boolean that determines if an enemy can shoot or not.
+*
+*/
+bool
+CEnemy::IsReadyToShoot()
+{
+	if(m_fCurrentRefireRate <= 0.0f)
+	{
+		return(true);
+	}
+	else
+	{
+		return(false);
+	}
+}
+
+/**
+*
+* This function sets the point value of an enemy.
+* @author Shawn Shiers
+* @param _usEnemyPointValue Enemy point value.
+* @return Returns void.
+*
+*/
+void
+CEnemy::SetEnemyPointValue(UInt16 _usEnemyPointValue)
+{
+	m_sEnemyPointValue = _usEnemyPointValue;
+}
+
+/**
+*
+* This function gets the point value of an enemy.
+* @author Shawn Shiers
+* @return Returns the point value of an enemy.
+*
+*/
+UInt16
+CEnemy::GetEnemyPointsValue()
+{
+	return(m_sEnemyPointValue);
+}
+
+/**
+*
+* This function reduces an enemy's life.
+* @author Ben Maher
+* @return Returns void.
+*
+*/
+void
+CEnemy::DepleteLife(UInt8 _ucAmount)
+{
+	m_ucLife -= _ucAmount;
+}
+
+/**
+*
+* This function gets an enemy's life.
+* @author Ben Maher
+* @return Returns void.
+*
+*/
+UInt8 
+CEnemy::GetLife()
+{
+	return(m_ucLife);
+}
+
+/**
+*
+* This function sets if an enemy is active or not.
+* @author Ben Maher
+* @return Returns void.
+*
+*/
+void 
+CEnemy::SetActive(bool _bIsActive)
+{
+	m_bIsActive = _bIsActive;
+}
+
+/**
+*
+* This function returns a boolean which determines if an enemy is active.
+* @author Ben Maher
+* @return Returns void.
+*
+*/
+bool
+CEnemy::IsActive()
+{
+	return (m_bIsActive);
+}
+
+void 
+CEnemy::SetLife(UInt8 _ucAmount)
+{
+	m_ucLife = _ucAmount;
+}

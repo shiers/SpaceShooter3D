@@ -1,0 +1,539 @@
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/IGAPR08/!svn/ver/1215/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter
+END
+igviewport.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/IGAPR08/!svn/ver/1206/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/igviewport.cpp
+END
+INIParser.h
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/INIParser.h
+END
+DebugCamera.h
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/IGAPR08/!svn/ver/1215/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/DebugCamera.h
+END
+PowerUp.h
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/IGAPR08/!svn/ver/1128/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/PowerUp.h
+END
+EntityManager.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/EntityManager.cpp
+END
+level.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/IGAPR08/!svn/ver/1212/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/level.cpp
+END
+igcamera.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/igcamera.cpp
+END
+game.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/IGAPR08/!svn/ver/1202/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/game.cpp
+END
+LogManager.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/LogManager.cpp
+END
+Enemy.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/IGAPR08/!svn/ver/1162/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/Enemy.cpp
+END
+entity.h
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/entity.h
+END
+SeekerEnemy.h
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/IGAPR08/!svn/ver/990/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/SeekerEnemy.h
+END
+playerinput.h
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/playerinput.h
+END
+dikeyboard.h
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/dikeyboard.h
+END
+RandomEnemy.h
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/IGAPR08/!svn/ver/982/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/RandomEnemy.h
+END
+messageprocessor.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/IGAPR08/!svn/ver/1158/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/messageprocessor.cpp
+END
+Explosion.h
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/IGAPR08/!svn/ver/1065/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/Explosion.h
+END
+logd3dfb.h
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/logd3dfb.h
+END
+toolbelt.h
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/toolbelt.h
+END
+billboard.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/IGAPR08/!svn/ver/1102/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/billboard.cpp
+END
+BackDrop.h
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/BackDrop.h
+END
+DirectionalLight.h
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/IGAPR08/!svn/ver/1095/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/DirectionalLight.h
+END
+Bullet.h
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/IGAPR08/!svn/ver/1031/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/Bullet.h
+END
+Player.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/IGAPR08/!svn/ver/1162/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/Player.cpp
+END
+mesh.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/IGAPR08/!svn/ver/1202/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/mesh.cpp
+END
+LogTarget.h
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/LogTarget.h
+END
+DebugCamera.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/IGAPR08/!svn/ver/1215/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/DebugCamera.cpp
+END
+xinputcontroller.h
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/IGAPR08/!svn/ver/1122/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/xinputcontroller.h
+END
+PowerUp.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/IGAPR08/!svn/ver/1134/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/PowerUp.cpp
+END
+renderer.h
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/renderer.h
+END
+dikeyboard.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/IGAPR08/!svn/ver/1206/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/dikeyboard.cpp
+END
+igcamera.h
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/igcamera.h
+END
+Hud.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/IGAPR08/!svn/ver/1212/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/Hud.cpp
+END
+LogManager.h
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/LogManager.h
+END
+DirectionalLight.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/IGAPR08/!svn/ver/1122/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/DirectionalLight.cpp
+END
+BackDrop.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/BackDrop.cpp
+END
+Bullet.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/IGAPR08/!svn/ver/1065/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/Bullet.cpp
+END
+messageprocessor.h
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/IGAPR08/!svn/ver/1202/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/messageprocessor.h
+END
+LogOutputWindow.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/LogOutputWindow.cpp
+END
+xinputcontroller.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/IGAPR08/!svn/ver/1158/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/xinputcontroller.cpp
+END
+camera.h
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/camera.h
+END
+directinputcontroller.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 120
+/svn/IGAPR08/!svn/ver/1206/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/directinputcontroller.cpp
+END
+billboard.h
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/billboard.h
+END
+Player.h
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/IGAPR08/!svn/ver/1162/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/Player.h
+END
+mesh.h
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/IGAPR08/!svn/ver/1202/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/mesh.h
+END
+particleemitter.h
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/IGAPR08/!svn/ver/1065/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/particleemitter.h
+END
+3dobject.h
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/3dobject.h
+END
+particle.h
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/IGAPR08/!svn/ver/1065/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/particle.h
+END
+Shield.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/IGAPR08/!svn/ver/1162/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/Shield.cpp
+END
+topdowncamera.h
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/topdowncamera.h
+END
+highscore.h
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/IGAPR08/!svn/ver/1127/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/highscore.h
+END
+defines.h
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/defines.h
+END
+main.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/IGAPR08/!svn/ver/1202/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/main.cpp
+END
+Hud.h
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/IGAPR08/!svn/ver/1212/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/Hud.h
+END
+PointLight.h
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/IGAPR08/!svn/ver/1122/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/PointLight.h
+END
+dynamicentity.h
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/IGAPR08/!svn/ver/1065/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/dynamicentity.h
+END
+ShooterEnemy.h
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/IGAPR08/!svn/ver/997/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/ShooterEnemy.h
+END
+LogFile.h
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/LogFile.h
+END
+titlescreen.h
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/titlescreen.h
+END
+INIParser.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/INIParser.cpp
+END
+particleemitter.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/IGAPR08/!svn/ver/1102/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/particleemitter.cpp
+END
+3dobject.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/IGAPR08/!svn/ver/1071/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/3dobject.cpp
+END
+LogOutputWindow.h
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/LogOutputWindow.h
+END
+Clock.h
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/Clock.h
+END
+d3drenderer.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/IGAPR08/!svn/ver/1095/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/d3drenderer.cpp
+END
+topdowncamera.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/IGAPR08/!svn/ver/1065/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/topdowncamera.cpp
+END
+directinputcontroller.h
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/directinputcontroller.h
+END
+particle.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/IGAPR08/!svn/ver/1065/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/particle.cpp
+END
+igviewport.h
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/igviewport.h
+END
+D3DRenderer.h
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/D3DRenderer.h
+END
+highscore.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/highscore.cpp
+END
+SeekerEnemy.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/IGAPR08/!svn/ver/990/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/SeekerEnemy.cpp
+END
+EntityManager.h
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/EntityManager.h
+END
+level.h
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/IGAPR08/!svn/ver/1183/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/level.h
+END
+playerinput.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/IGAPR08/!svn/ver/1206/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/playerinput.cpp
+END
+Shield.h
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/IGAPR08/!svn/ver/1162/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/Shield.h
+END
+game.h
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/IGAPR08/!svn/ver/1202/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/game.h
+END
+RandomEnemy.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/IGAPR08/!svn/ver/1071/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/RandomEnemy.cpp
+END
+Explosion.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/IGAPR08/!svn/ver/1065/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/Explosion.cpp
+END
+dynamicentity.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/IGAPR08/!svn/ver/1206/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/dynamicentity.cpp
+END
+ShooterEnemy.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/IGAPR08/!svn/ver/997/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/ShooterEnemy.cpp
+END
+LogFile.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/LogFile.cpp
+END
+titlescreen.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/titlescreen.cpp
+END
+PointLight.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/IGAPR08/!svn/ver/1139/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/PointLight.cpp
+END
+Enemy.h
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/IGAPR08/!svn/ver/1162/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/Enemy.h
+END
+logd3dfb.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/logd3dfb.cpp
+END
+viewport.h
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/viewport.h
+END
+TeamBMSS 3D Shooter.vcproj
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/IGAPR08/!svn/ver/1075/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/TeamBMSS%203D%20Shooter.vcproj
+END
+Clock.cpp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/IGAPR08/!svn/ver/933/IG300/TeamBHSS/Project%20Gold/Source%20Code/TeamBMSS%203D%20Shooter/Clock.cpp
+END

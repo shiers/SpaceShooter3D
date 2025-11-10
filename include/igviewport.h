@@ -1,0 +1,107 @@
+﻿#pragma once
+
+#ifndef __IGVIEWPORT_H__
+#define __IGVIEWPORT_H__
+
+// Library Includes
+#include <d3d9.h>
+#include <d3dx9.h>
+#include <map>
+
+// Local Includes
+#include "defines.h"
+#include "camera.h"
+#include "viewport.h"
+#include "igcamera.h"
+
+// Types
+
+// Constants
+
+// Prototypes
+class ICamera;
+class IRenderer;
+
+class CIGViewport : public IViewport
+{
+	// Member Functions
+public:
+	CIGViewport();
+	virtual ~CIGViewport();
+
+	virtual bool Initialise(UInt32 _uiX,
+							UInt32 _uiY,
+							UInt32 _uiWidth,
+							UInt32 _uiHeight,
+							D3DCOLOR _ClearColor, 
+							IRenderer* _pRenderer,
+							bool _bZClear = true);
+
+	virtual ICamera* CreateCamera(Float32 _fFOV,
+								  ECameraMode _eMode,
+								  ECameraType _eType,
+								  Float32 _fNearClip,
+								  Float32 _fFarClip,
+								  UInt32& _ruiCameraID);
+
+	virtual ICamera* GetCamera(UInt32 _uiCameraID);
+
+	void DeleteCamera(UInt32 _uiCameraID);
+
+	void ProcessActiveCamera(Float32 _fDeltaTick);
+
+	virtual bool SetActiveCamera(UInt32 _uiCameraID);
+	virtual ICamera* GetActiveCamera();
+
+	virtual D3DVIEWPORT9* GetD3DViewport();
+
+	virtual UInt32 GetWidth() const;
+	virtual UInt32 GetHeight() const;
+
+	virtual UInt32 GetPosX() const;
+	virtual UInt32 GetPosY() const;
+
+	virtual bool DoZClear() const;
+
+	virtual D3DCOLOR GetClearColor() const;
+
+	virtual void SetWireColor(D3DCOLORVALUE& _rColorWire);
+	virtual D3DCOLORVALUE& GetWireColor();
+
+	virtual void RecalculateProjectionMatrix();
+
+	// Shade mode functions
+	virtual EShadeMode GetShadeMode() const;
+	virtual void SetShadeMode(EShadeMode _eShadeMode);
+
+protected:
+
+private:
+
+	// Member Variables
+public:
+	D3DVIEWPORT9* m_pD3DViewport;
+
+	D3DCOLOR m_ClearColor;
+
+	D3DCOLORVALUE m_rColorWire;
+
+	EShadeMode m_eShadeMode;
+
+	bool m_bZClear;
+
+	std::map<UInt32, CIGCamera*> m_mapCameras;
+
+	UInt32 m_uiActiveCamera;
+
+	IRenderer* m_pRenderer;
+
+protected:
+
+private:
+
+};
+#endif // __IGVIEWPORT_H__
+
+
+

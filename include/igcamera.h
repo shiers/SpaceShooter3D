@@ -1,0 +1,112 @@
+﻿#pragma once
+
+#ifndef __IGCAMERA_H__
+#define __IGCAMERA_H__
+
+// Library Includes
+
+// Local Includes
+#include "defines.h"
+#include "camera.h"
+
+// Types
+
+// Constants
+
+// Prototypes
+class IRenderer;
+class IViewport;
+
+class CIGCamera : public ICamera
+{
+	// Member Functions
+public:
+	CIGCamera();
+	virtual ~CIGCamera();
+
+	virtual bool Initialise(IViewport* _pViewport,
+							Float32 _fFOV,
+							ECameraMode _eMode,
+							ECameraType _eType,
+							Float32 _fNearClip,
+							Float32 _fFarClip,
+							UInt32 _uiID,
+							IRenderer* _pRenderer);
+
+	virtual void Process (Float32 _fDeltaTick);
+
+	virtual void SetClipPlanes(Float32 _fNear,
+							   Float32 _fFar);
+
+	virtual Float32 GetNearPlane() const;
+	virtual Float32 GetFarPlane() const;
+	virtual void SetFOV(Float32 _fFOV);
+
+	virtual void SetView3D(D3DXVECTOR3& _rvectRight,
+						   D3DXVECTOR3& _rvectUp,
+						   D3DXVECTOR3& _rvectDir,
+						   D3DXVECTOR3& _rvectPos);
+
+	virtual void SetViewLookAt(D3DXVECTOR3& _rvectPos,
+							   D3DXVECTOR3& _rvectLook,
+							   D3DXVECTOR3& _rvectUp);
+
+	virtual void SetWorldMatrix(D3DXMATRIX& _rmatWorld);
+	virtual void SetViewMatrix(D3DXMATRIX& _rmatView);
+	virtual void SetProjMatrix(D3DXMATRIX& _rmatProj);
+
+	virtual void SetMode(ECameraMode _eMode);
+	virtual void SetType(ECameraType _eType);
+
+	virtual void CalcViewProj();
+
+	virtual void CalcWorldViewProj();
+
+	virtual void ResetMatrices();
+
+	void Reset3DMatrices();
+	void Reset2DMatrices();
+
+	virtual D3DXVECTOR3& GetPosition();
+
+	virtual D3DXMATRIX* GetViewMatrix();
+	virtual D3DXMATRIX* GetProjMatrix();
+	virtual D3DXMATRIX* GetWorldMatrix();
+
+	virtual void UpdateRenderer();
+
+	void RecalculateProjection();
+
+protected:
+
+private:
+
+	// Member Variables
+public:
+
+protected:
+	IRenderer* m_pRenderer;
+	IViewport* m_pViewport;
+
+	D3DXMATRIX m_matWorld;
+	D3DXMATRIX m_matView;
+	D3DXMATRIX m_matProj;
+	D3DXVECTOR3 m_vecPosition;
+
+	ECameraMode m_eMode;
+	ECameraType m_eType;
+
+	Float32 m_fFOV;
+	Float32 m_fAspectRatio;
+	Float32 m_fNearClip;
+	Float32 m_fFarClip;
+
+	UInt32 m_uiID;
+
+private:
+
+};
+#endif // __IGCAMERA_H__
+
+
+

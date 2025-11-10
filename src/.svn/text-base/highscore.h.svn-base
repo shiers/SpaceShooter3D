@@ -1,0 +1,66 @@
+//
+//   Diploma of Interactive Gaming
+//   Game Development Faculty
+//   Media Design School
+//   Auckland
+//   New Zealand
+//   
+//   (c) 2008 Media Design School
+//   
+//   File Name      :   highscore.h
+//   Description    :   High score loader and saver
+//   Author         :   Benjamin Maher
+//   Mail           :   DrEnzyme@gmail.com
+//
+
+#pragma once
+
+#ifndef __IGAPR08_IG100_HIGHSCORE_H__
+#define __IGAPR08_IG100_HIGHSCORE_H__
+
+// Library Includes
+#include <vector>
+#include <string>
+
+// Local Includes
+#include "defines.h"
+
+// Types
+
+// Constants
+
+// Prototypes
+
+
+class CHighScore
+{
+   //Member Functions
+public:
+	CHighScore();
+	~CHighScore();
+
+	void LoadHighScores(const Int8* _pFileName);
+	void SaveHighScores(const Int8* _pFileName);
+
+	void AddHighScore(Int32 _iScore,  const Int8* _cName = "TeamBMSS");
+	bool IsHighScore(Int32 _iScore);
+
+	void GetScore(Int32 _iPlace, Int32& _iHighScore, std::string& _strHighName);
+	Int32 GetNumScores();
+
+protected:
+
+private:
+
+   //Member Variables
+public:
+	
+protected:
+
+private:
+	std::vector<std::string> m_pvecNames;
+	std::vector<Int32> m_pvecScores;
+
+};
+
+#endif //__IGAPR08_IG100_HIGHSCORE_H__

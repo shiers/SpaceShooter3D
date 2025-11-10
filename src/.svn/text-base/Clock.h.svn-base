@@ -1,0 +1,63 @@
+//
+// Diploma of Interactive Gaming
+// Game Development Faculty
+// Media Design School
+// Auckland
+// New Zealand
+// 
+// (c) 2008 Media Design School
+// 
+// File Name      :   Clock.h
+// Description    :   Game Clock delclaration file
+// Author         :   Shawn Shiers
+// Mail           :   shawn@dryad.ca
+// 
+
+#pragma once
+
+#ifndef __IGAPR08_IG100_CLOCK_H__
+#define __IGAPR08_IG100_CLOCK_H__
+
+// Library Includes
+
+// Local Includes
+#include "defines.h"
+
+// Types
+
+// Constants
+
+// Prototypes
+
+class CClock
+{
+	// Member Functions
+public:
+	CClock();
+	virtual ~CClock();
+
+	virtual bool Initialise();
+	
+	virtual void Process();
+	
+	Float32 GetDeltaTick();
+
+protected:
+
+private:
+	CClock(const CClock& _kr);
+	CClock& operator=(const CClock& _kr);
+
+	// Member Variables
+public:
+
+protected:
+	Float32 m_fTimeElapsed;
+	Float32 m_fDeltaTime;
+	Float32 m_fLastTime;
+	Float32 m_fCurrentTime;
+
+private:
+
+};
+#endif // __IGAPR08_IG100_CLOCK_H__

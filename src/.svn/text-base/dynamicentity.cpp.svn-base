@@ -1,0 +1,359 @@
+//
+//   Diploma of Interactive Gaming
+//   Game Development Faculty
+//   Media Design School
+//   Auckland
+//   New Zealand
+//   
+//   (c) 2008 Media Design School
+//   
+//   File Name      :   dynamiCDynamicentity.cpp
+//   Description    :   A Dynamic Entity in a game
+//   Author         :   Benjamin Maher
+//   Mail           :   DrEnzyme@gmail.com
+
+// Library Includes
+#include <d3dx9.h>
+
+// Local Includes
+#include "d3drenderer.h"
+#include "mesh.h"
+
+// This Includes
+#include "dynamicentity.h"
+
+// Static Variables
+
+// Static Function Prototypes
+
+// Implementation
+
+CDynamicEntity::CDynamicEntity()
+: m_fSpeed(0)
+, m_fMoveFriction(0)
+, m_fTurnFriction(0)
+, m_fTurnSpeed(0.0f)
+, m_bHitBoundaries(0)
+, m_bHitRightBoundary(0)
+, m_bHitLeftBoundary(0)
+, m_bHitTopBoundary(0)
+, m_bHitBottomBoundary(0)
+{
+	ZeroMemory(&m_boundaryRect, sizeof(RECT));
+}
+
+CDynamicEntity::~CDynamicEntity()
+{
+}
+
+/**
+*
+* This function processes the Dynamic Entity. It moves the entity 
+* based on the it's speed, friction, yaw pitch and roll
+*
+* @author: Benjamin Maher.
+* @param _fDeltaTick: The change in time since the previous frame.
+* @return void.
+*
+*/
+void
+CDynamicEntity::Process(Float32 _fDeltaTick)
+{
+	C3DObject::Process(_fDeltaTick);
+
+	m_fSpeed *= 1 - m_fMoveFriction;
+
+	m_fYaw *= 1 - m_fTurnFriction;
+	m_fPitch *= 1 - m_fTurnFriction;
+	m_fRoll *= 1 - m_fTurnFriction;
+
+	D3DXVECTOR3 tempVec;
+
+	tempVec.x = m_matWorld._31;
+	tempVec.y = m_matWorld._32;
+	tempVec.z = m_matWorld._33;
+
+	D3DXVec3Normalize(&tempVec, &tempVec);
+	D3DXVec3Scale(&tempVec, &tempVec, m_fSpeed * _fDeltaTick);
+
+	m_matWorld._41 += tempVec.x;
+	m_matWorld._42 += tempVec.y;
+	m_matWorld._43 += tempVec.z;
+
+	m_vec3Position.x = m_matWorld._41;
+	m_vec3Position.y = m_matWorld._42;
+	m_vec3Position.z = m_matWorld._43;
+
+	ZeroMemory(&m_vec3Direction, sizeof(D3DXVECTOR3));
+	m_vec3Direction.x = m_matWorld._31;
+	m_vec3Direction.y = m_matWorld._32;
+	m_vec3Direction.z = m_matWorld._33;
+
+	m_bHitBoundaries = false;
+	m_bHitRightBoundary = false;
+	m_bHitLeftBoundary = false;
+	m_bHitTopBoundary = false;
+	m_bHitBottomBoundary = false;
+	if(m_boundaryRect.left != 0 && m_boundaryRect.right != 0 && m_boundaryRect.top != 0 && m_boundaryRect.bottom != 0)
+	{
+		float fRadius = m_pMesh->GetBoundingSphereRadius();
+		if(m_matWorld._41 - fRadius <  m_boundaryRect.left)
+		{
+			m_matWorld._41 = m_boundaryRect.left + fRadius;
+			m_bHitBoundaries = true;
+			m_bHitLeftBoundary = true;
+		}
+		if(m_matWorld._41 + fRadius >  m_boundaryRect.right)
+		{
+			m_matWorld._41 = m_boundaryRect.right - fRadius;
+			m_bHitBoundaries = true;
+			m_bHitRightBoundary = true;
+		}
+		if(m_matWorld._43 + fRadius >  m_boundaryRect.top)
+		{
+			m_matWorld._43 = m_boundaryRect.top - fRadius;
+			m_bHitBoundaries = true;
+			m_bHitTopBoundary = true;
+		}
+		if(m_matWorld._43 - fRadius <  m_boundaryRect.bottom)
+		{
+			m_matWorld._43 = m_boundaryRect.bottom + fRadius;
+			m_bHitBoundaries = true;
+			m_bHitBottomBoundary = true;
+		}
+	}
+
+	D3DXVec3Normalize(&m_vec3Heading, &m_vec3Heading);
+	D3DXVec3Normalize(&m_vec3Direction, &m_vec3Direction);
+
+	float fHeadingRadians = atan2(m_vec3Heading.x, m_vec3Heading.z);
+	float fDirectionRadians = atan2(m_vec3Direction.x, m_vec3Direction.z);
+
+	if(fDirectionRadians < 0.0f)
+	{
+		fDirectionRadians += 2*PI;
+	}
+	
+	if(fHeadingRadians < 0.0f)
+	{
+		fHeadingRadians += 2*PI;
+	}
+
+	bool bSwitchedOnce = false;
+	if(m_vec3Heading.x || m_vec3Heading.z)
+	{
+		if(fDirectionRadians < fHeadingRadians)
+		{
+			if(fHeadingRadians - fDirectionRadians < PI)
+			{
+				fDirectionRadians += m_fTurnSpeed * _fDeltaTick;
+			}
+			else
+			{
+				fDirectionRadians -= m_fTurnSpeed * _fDeltaTick;
+			}
+			bSwitchedOnce = true;
+		}
+		if(fDirectionRadians > fHeadingRadians)
+		{
+			if(bSwitchedOnce)
+			{
+				fDirectionRadians = fHeadingRadians;
+				m_vec3Direction = m_vec3Heading;
+			}
+			else
+			{
+				if(fDirectionRadians - fHeadingRadians < PI)
+				{
+					fDirectionRadians -= m_fTurnSpeed * _fDeltaTick;
+				}
+				else
+				{
+					fDirectionRadians += m_fTurnSpeed * _fDeltaTick;
+				}
+			}
+			if(fDirectionRadians < fHeadingRadians)
+			{
+				fDirectionRadians = fHeadingRadians;
+				m_vec3Direction = m_vec3Heading;
+			}
+		}
+		D3DXMATRIX tempMatrix = m_matWorld;
+		D3DXMatrixRotationY(&m_matWorld, fDirectionRadians);
+		m_matWorld._41 = tempMatrix._41;
+		m_matWorld._42 = tempMatrix._42;
+		m_matWorld._43 = tempMatrix._43;
+
+	}
+}
+
+/**
+*
+* This function alters the entity's speed by a specified
+* amount.
+*
+* @author Benjamin Maher
+* @param _fAmount: sets the entity's speed to this value
+* @return void.
+*
+*/
+void
+CDynamicEntity::SetSpeed(Float32 _fAmount)
+{
+	m_fSpeed = _fAmount;
+}
+
+/**
+*
+* This function alters the entity's move friction by a specified amount. 
+* The entity's friction is a point value that specifies how much energy the
+* entity will lose per frame. A value of 0 means that no energy is lost, while
+* a value of 1 means that all the entity's energy will be lost.
+*
+* @author Benjamin Maher
+* @param _fAmount: sets the entity's move friction to this value.
+* @return void.
+*
+*/
+void
+CDynamicEntity::SetMoveFriction(Float32 _fAmount)
+{
+	m_fMoveFriction = _fAmount;
+}
+
+/**
+*
+* This function alters the entity's turn friction by a specified amount. 
+* The entity's friction is a point value that specifies how much energy the
+* entity will lose per frame. A value of 0 means that no energy is lost, while
+* a value of 1 means that all the entity's energy will be lost.
+*
+* @author Benjamin Maher
+* @param _fAmount: sets the entity's turn friction to this value.
+* @return void.
+*
+*/
+void
+CDynamicEntity::SetTurnFriction(Float32 _fAmount)
+{
+	m_fTurnFriction = _fAmount;
+}
+
+/**
+*
+* This function sets the position and direction vector.
+* @author Shawn Shiers
+* @param _vec3Position is the position vector.
+* @param _vec3Position is the direction vector.
+* @return Returns void.
+*
+*/
+void
+CDynamicEntity::SetXYZDirection(D3DXVECTOR3* _vec3Position, D3DXVECTOR3 _vec3Direction)
+{
+	D3DXMatrixIdentity(&m_matWorld);
+
+	D3DXVECTOR3 right;
+	D3DXVECTOR3 up;
+	up.x = 0.0f;
+	up.y = 1.0f;
+	up.z = 0.0f;
+
+	m_matWorld._41 = _vec3Position->x;
+	m_matWorld._42 = _vec3Position->y;
+	m_matWorld._43 = _vec3Position->z;
+
+	m_matWorld._21 = up.x;
+	m_matWorld._22 = up.y;
+	m_matWorld._23 = up.z;
+
+	D3DXVec3Normalize(&_vec3Direction, &_vec3Direction);
+	m_matWorld._31 = _vec3Direction.x;
+	m_matWorld._32 = _vec3Direction.y;
+	m_matWorld._33 = _vec3Direction.z;
+
+	D3DXVec3Cross(&right, &up, &_vec3Direction);
+	D3DXVec3Normalize(&right, &right);
+
+	m_matWorld._11 = right.x;
+	m_matWorld._12 = right.y;
+	m_matWorld._13 = right.z;
+}
+
+/**
+*
+* This function returns the heading vector.
+* @author Shawn Shiers
+* @param
+* @return Returns the heading vector.
+*
+*/
+D3DXVECTOR3
+CDynamicEntity::GetHeadingVector() const
+{
+	return (m_vec3Heading);
+}
+
+/**
+*
+* This function returns the direction vector.
+* @author Shawn Shiers
+* @param
+* @return Returns the direction vector.
+*
+*/
+D3DXVECTOR3
+CDynamicEntity::GetDirectionVector() const
+{
+	return (m_vec3Direction);
+}
+
+/**
+*
+* This function returns the current position of the object.
+* @author Shawn Shiers
+* @param
+* @return Returns the current position of the object.
+*
+*/
+D3DXVECTOR3* 
+CDynamicEntity::GetPosition()
+{
+	m_vec3Position.x = m_matWorld._41;
+	m_vec3Position.y = m_matWorld._42;
+	m_vec3Position.z = m_matWorld._43;
+	return(&m_vec3Position);
+}
+
+bool 
+CDynamicEntity::IsCollision(CDynamicEntity* _pEntity1, CDynamicEntity* _pEntity2)
+{
+	D3DXVECTOR3 vec3Entity1Position = *(_pEntity1->GetPosition());
+	D3DXVECTOR3 vec3Entity2Position = *(_pEntity2->GetPosition());
+
+	D3DXVECTOR3 vec3Distance = vec3Entity1Position - vec3Entity2Position;
+
+	float fDistance = D3DXVec3Length(&vec3Distance);
+
+	if(fDistance < _pEntity1->GetRadius() + _pEntity2->GetRadius())
+	{
+		//Collision
+		return(true);
+	}
+	else
+	{
+		return(false);
+	}
+}
+
+Float32
+CDynamicEntity::GetRadius()
+{
+	return(m_pMesh->GetBoundingSphereRadius());
+}
+
+void
+CDynamicEntity::SetBoundary(RECT _rect)
+{
+	m_boundaryRect = _rect;
+}

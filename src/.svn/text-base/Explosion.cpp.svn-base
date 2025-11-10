@@ -1,0 +1,101 @@
+//
+// Diploma of Interactive Gaming
+// Game Development Faculty
+// Media Design School
+// Auckland
+// New Zealand
+// 
+// (c) 2008 Media Design School
+// 
+// File Name      :   Explosion.cpp
+// Description    :   A type of particle emmiter
+// Author         :   Shawn Shiers
+// Mail           :   shawn@dryad.ca
+//
+
+// Library Includes
+
+// Local Includes
+
+// This Includes
+#include "Explosion.h"
+
+// Static Variables
+
+// Static Function Prototypes
+
+// Implementation
+CExplosion::CExplosion()
+{
+	
+}
+CExplosion::~CExplosion()
+{
+
+}
+
+/**
+*
+* This function initialises the expolsions.
+*
+* @author Shawn Shiers
+* @param 
+* @return Returns true if successful.
+*
+*/
+bool
+CExplosion::Initialise(D3DXVECTOR3* _position, 
+							 D3DCOLOR _colour, 
+							 int _iNumberOfParticles, 
+							 IDirect3DDevice9* _pDevice,
+							 float _fLifeTime,
+							 float _fSpeed)
+{
+	bool bFailure = !CParticleEmitter::Initialise(_position, 
+							 _colour, 
+							 _iNumberOfParticles, 
+							 _pDevice,
+							 _fLifeTime,
+							 _fSpeed);
+
+	if(!bFailure)
+	{
+		if(!m_arraypParticles)
+		{
+			m_arraypParticles = new CParticle[m_iNumParticles];
+		}
+		
+		ResetParticles();
+	}
+
+	return(!bFailure);
+}
+
+void
+CExplosion::ResetParticles()
+{
+	for(int i = 0 ; i < m_iNumParticles ; ++i)
+	{
+		D3DXVECTOR3 Velocity;
+		Velocity.x = m_fSpeed * RANDOMPOINTVALUE;
+		Velocity.y = m_fSpeed * RANDOMPOINTVALUE;
+		Velocity.z = m_fSpeed * RANDOMPOINTVALUE;
+		D3DXVECTOR3 Acceleration;
+		const float yAcceleration = -1.0f - static_cast<float>((rand() % 100)) / 100.0f * kfLIFE_TIME_VARIANCE * -1.0f;
+		const float xAcceleration = 0;
+		const float zAcceleration = 0;
+		Acceleration.x = xAcceleration;
+		Acceleration.y = yAcceleration;
+		Acceleration.z = zAcceleration;
+		D3DXVec3Normalize(&Velocity, &Velocity);
+		float randomLife = m_fLifeTime - static_cast<float>((rand() % 100)) / 100.0f * kfLIFE_TIME_VARIANCE * m_fLifeTime;
+		D3DXVECTOR3 zero;
+		ZeroMemory(&zero, sizeof(D3DXVECTOR3));
+		m_arraypParticles[i].Initialise(zero, 
+										Velocity, 
+										Acceleration,
+										m_fSpeed,
+										randomLife,
+										true);
+	}
+}

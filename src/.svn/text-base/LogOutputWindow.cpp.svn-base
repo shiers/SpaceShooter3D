@@ -1,0 +1,58 @@
+//
+// Diploma of Interactive Gaming
+// Game Development Faculty
+// Media Design School
+// Auckland
+// New Zealand
+// 
+// (c) 2008 Media Design School
+// 
+// File Name      :   LogOutputWindow.cpp
+// Description    :   
+// Author         :   Shawn Shiers
+// Mail           :   shawn@dryad.ca
+//
+
+// Library Includes
+#include <windows.h>
+#include <string>
+
+// Local Includes
+#include "toolbelt.h"
+
+// This Includes
+#include "LogOutputWindow.h"
+
+// Static Variables
+
+// Prototypes
+
+// Implementation
+
+CLogOutputWindow::CLogOutputWindow()
+{
+
+}
+
+CLogOutputWindow::~CLogOutputWindow()
+{
+
+}
+
+/**
+*
+* This function is resposible for writing a message.
+*
+* @author Shawn Shiers
+* @param _pcMessage is the message to be written.
+* @return Returns void.
+*
+*/
+void
+CLogOutputWindow::Write(const Int8* _pcMessage)
+{
+	WChar16* pMessage = StringToWchar_t(_pcMessage);
+	OutputDebugString(pMessage); // Sends output to debug output window.
+	delete pMessage;
+	pMessage = 0;
+}
