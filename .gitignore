@@ -1,1 +1,4 @@
 *.vcproj
+# Ignore CLion CMake debug build folder at repo root and any nested instances
+cmake-build-debug/
+**/cmake-build-debug/
