@@ -22,7 +22,6 @@ CMessageProcessor::CMessageProcessor()
 	  , m_iMouseY(0)
 {
 	//Constructor.
-	m_messageQueue.empty();
 	ZeroMemory(m_ArrayKeys, MAX_KEY);
 	ZeroMemory(&m_XInputInformation, sizeof(XInputInformation)*k_iMAX_XINPUT_CONTROLLERS);
 }
@@ -50,9 +49,7 @@ CMessageProcessor::Initialise(IDirect3DDevice9 *_pDevice)
 	bool bFailure = false;
 
 	m_messageArray.clear();
-	m_messageArray.empty();
 	m_pFunctionArray.clear();
-	m_pFunctionArray.empty();
 
 	m_pScreenLogger = new CLogD3DFB;
 	m_pScreenLogger->Initialise(_pDevice);
