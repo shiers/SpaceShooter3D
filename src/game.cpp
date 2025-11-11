@@ -20,7 +20,7 @@
 #include "../include/game.h"
 
 // Static Variables
-CGame *CGame::s_pGame = 0;
+CGame *CGame::s_pGame = nullptr;
 
 // Static Function Prototypes
 static bool FileExists(const wchar_t *filename)
@@ -29,24 +29,45 @@ static bool FileExists(const wchar_t *filename)
 	return (_wstat(filename, &buffer) == 0);
 }
 
+static void DebugLogMessage(CMessageProcessor *_pProcessor, const char *_pcMessage)
+{
+#ifdef _DEBUG
+	if (!_pcMessage || !_pcMessage[0])
+	{
+		return;
+	}
+
+	if (_pProcessor)
+	{
+		_pProcessor->SendMessage(_pcMessage);
+	}
+	OutputDebugStringA(_pcMessage);
+	OutputDebugStringA("\n");
+#else
+	(void) _pProcessor;
+	(void) _pcMessage;
+#endif
+}
+
 #define RANDOMCOLOUR D3DCOLOR_XRGB((rand() % 255), (rand() % 255), (rand() % 255))
 
 // Implementation
 CGame::CGame()
-	: m_pClock(0)
+	: m_pClock(nullptr)
 	  , m_fDegrees(0)
-	  , m_pD3DRenderer(0)
-	  , m_pMessageProcessor(0)
-	  , m_pPlayerInput(0)
-	  , m_pTitleScreen(0)
-	  , m_arraypViewports(0)
-	  , m_bIsTitleScreen(0)
-	  , m_pIniParser(0)
-	  , m_pLevel(0)
-	  , m_bWasBackButtonPressedLastFrame(0)
-	  , m_bBoundingKeyPressed(0)
-	  , m_bWireKeyPressed(0)
-	  , m_bDebugKeyPressed(0)
+	  , m_pD3DRenderer(nullptr)
+	  , m_pMessageProcessor(nullptr)
+	  , m_pPlayerInput(nullptr)
+	  , m_pTitleScreen(nullptr)
+	  , m_arraypViewports(nullptr)
+	  , m_bIsTitleScreen(false)
+	  , m_pIniParser(nullptr)
+	  , m_pLevel(nullptr)
+	  , m_bWasBackButtonPressedLastFrame(false)
+	  , m_bBoundingKeyPressed(false)
+	  , m_bWireKeyPressed(false)
+	  , m_bDebugKeyPressed(false)
+	  , m_bDebugCameraActive(false)
 	  , m_bIsFullScreen(true)
 {
 	//This is private, and so should never be called outside game.
@@ -55,25 +76,25 @@ CGame::CGame()
 CGame::~CGame()
 {
 	delete m_pClock;
-	m_pClock = 0;
+	m_pClock = nullptr;
 	delete m_pD3DRenderer;
-	m_pD3DRenderer = 0;
+	m_pD3DRenderer = nullptr;
 	delete m_pTitleScreen;
-	m_pTitleScreen = 0;
+	m_pTitleScreen = nullptr;
 
 	CMessageProcessor::DestroyInstance();
-	m_pMessageProcessor = 0;
+	m_pMessageProcessor = nullptr;
 
 	CPlayerInput::DestroyInstance();
 
 	delete m_pIniParser;
-	m_pIniParser = 0;
+	m_pIniParser = nullptr;
 
 	delete[] m_arraypViewports;
-	m_arraypViewports = 0;
+	m_arraypViewports = nullptr;
 
 	delete m_pLevel;
-	m_pLevel = 0;
+	m_pLevel = nullptr;
 }
 
 CGame::CGame(const CGame &_kr)
@@ -283,11 +304,17 @@ CGame::Process(float _fDeltaTick)
 		if (m_arraypViewports)
 		{
 			m_arraypViewports[1].SetActiveCamera(0);
+			if (m_bDebugCameraActive)
+			{
+				m_bDebugCameraActive = false;
+				DebugLogMessage(m_pMessageProcessor,
+				                "DEBUG MODE: Reverted viewport 1 to default camera (title screen).");
+			}
 		}
 #endif
 		m_pD3DRenderer->GetDevice()->SetRenderState(D3DRS_LIGHTING, FALSE);
 
-		CTopDownCamera *pTempCamera = 0;
+		CTopDownCamera *pTempCamera = nullptr;
 		D3DXMATRIX tempMatrix;
 		D3DXMatrixIdentity(&tempMatrix);
 		for (int i = 0; i < MAX_PLAYERS; ++i)
@@ -300,7 +327,7 @@ CGame::Process(float _fDeltaTick)
 		if (m_pLevel)
 		{
 			delete m_pLevel;
-			m_pLevel = 0;
+			m_pLevel = nullptr;
 		}
 		if (m_pTitleScreen)
 		{
@@ -315,12 +342,9 @@ CGame::Process(float _fDeltaTick)
 		}
 	}
 	// Controller back button handling
-	if (m_pMessageProcessor->GetXInputControllerState(0)->bBackButton)
+	if (m_pMessageProcessor->GetXInputControllerState(0)->bBackButton && !m_bWasBackButtonPressedLastFrame)
 	{
-		if (!m_bWasBackButtonPressedLastFrame)
-		{
-			SendMessage(m_hMainWindow, WM_KEYDOWN, VK_ESCAPE, 0);
-		}
+		SendMessage(m_hMainWindow, WM_KEYDOWN, VK_ESCAPE, 0);
 	}
 	m_bWasBackButtonPressedLastFrame = m_pMessageProcessor->GetXInputControllerState(0)->bBackButton;
 }
@@ -372,7 +396,7 @@ CGame::Draw()
 HINSTANCE
 CGame::GetAppInstance()
 {
-	return (m_hApplicationInstance);
+	return m_hApplicationInstance;
 }
 
 /**
@@ -385,7 +409,7 @@ CGame::GetAppInstance()
 CGame &
 CGame::GetInstance()
 {
-	if (s_pGame == 0)
+	if (s_pGame == nullptr)
 	{
 		s_pGame = new CGame;
 	}
@@ -402,7 +426,7 @@ CGame::GetInstance()
 HWND
 CGame::GetWindow()
 {
-	return (m_hMainWindow);
+	return m_hMainWindow;
 }
 
 /**
@@ -415,10 +439,10 @@ CGame::GetWindow()
 void
 CGame::DestroyInstance()
 {
-	if (s_pGame != 0)
+	if (s_pGame != nullptr)
 	{
 		delete s_pGame;
-		s_pGame = 0;
+		s_pGame = nullptr;
 	}
 }
 
@@ -433,7 +457,7 @@ CGame::DestroyInstance()
 int
 CGame::GetWindowHeight()
 {
-	return (m_iWindowHeight);
+	return m_iWindowHeight;
 }
 
 /**
@@ -445,9 +469,9 @@ CGame::GetWindowHeight()
 *
 */
 int
-CGame::GetWindowWidth()
+CGame::GetWindowWidth() const
 {
-	return (m_iWindowWidth);
+	return m_iWindowWidth;
 }
 
 /**
@@ -460,7 +484,7 @@ CGame::GetWindowWidth()
 CClock *
 CGame::GetClock()
 {
-	return (m_pClock);
+	return m_pClock;
 }
 
 /**
@@ -474,45 +498,65 @@ CGame::GetClock()
 void
 CGame::ProcessKeyboardControls(float _fDeltaTick)
 {
-	if (!m_pD3DRenderer || !CMessageProcessor::GetInstance())
+	if (!m_pD3DRenderer || !m_pMessageProcessor)
 	{
 		return;
 	}
 
-	if (CMessageProcessor::GetInstance()->CheckForKeyMessage(MESSAGE_PRESSED_KEY_F11))
+	if (m_pMessageProcessor->CheckForKeyMessage(MESSAGE_PRESSED_KEY_F11))
 	{
 		m_pD3DRenderer->DumpBackBufferToDisk("ScreenShot1.bmp");
 	}
 #ifdef _DEBUG
-	if (CMessageProcessor::GetInstance()->CheckForKeyMessage(MESSAGE_PRESSED_KEY_F9))
+	if (m_pMessageProcessor->CheckForKeyMessage(MESSAGE_PRESSED_KEY_F9))
 	{
 		if (!m_bBoundingKeyPressed)
 		{
 			CMesh::ToggleBoundingVolumes();
+			const bool bBoundingVisible = CMesh::AreBoundingVolumesVisible();
+			char logBuf[128];
+			sprintf_s(logBuf, "DEBUG MODE: Bounding volumes %s (F9).",
+			          bBoundingVisible ? "ENABLED" : "DISABLED");
+			DebugLogMessage(m_pMessageProcessor, logBuf);
 		}
 		m_bBoundingKeyPressed = true;
 	} else
 	{
 		m_bBoundingKeyPressed = false;
 	}
-	if (CMessageProcessor::GetInstance()->CheckForKeyMessage(MESSAGE_PRESSED_KEY_F8))
+	if (m_pMessageProcessor->CheckForKeyMessage(MESSAGE_PRESSED_KEY_F8))
 	{
 		if (!m_bWireKeyPressed)
 		{
 			CMesh::ToggleWireframe();
+			const bool bWireframeOn = CMesh::IsWireframeEnabled();
+			char logBuf[128];
+			sprintf_s(logBuf, "DEBUG MODE: Wireframe rendering %s (F8).",
+			          bWireframeOn ? "ENABLED" : "DISABLED");
+			DebugLogMessage(m_pMessageProcessor, logBuf);
 		}
 		m_bWireKeyPressed = true;
 	} else
 	{
 		m_bWireKeyPressed = false;
 	}
-	if (CMessageProcessor::GetInstance()->CheckForKeyMessage(MESSAGE_PRESSED_KEY_F7))
+	if (m_pMessageProcessor->CheckForKeyMessage(MESSAGE_PRESSED_KEY_F7))
 	{
 		if (!m_bDebugKeyPressed)
 		{
 			if (!m_bIsTitleScreen)
 			{
-				m_arraypViewports[1].SetActiveCamera(1);
+				if (m_arraypViewports)
+				{
+					m_arraypViewports[1].SetActiveCamera(1);
+					m_bDebugCameraActive = true;
+					DebugLogMessage(m_pMessageProcessor,
+					                "DEBUG MODE: Activated CAMERA_DEBUG on viewport 1 (F7).");
+				}
+			} else
+			{
+				DebugLogMessage(m_pMessageProcessor,
+				                "DEBUG MODE: Ignored debug camera toggle while title screen is active.");
 			}
 		}
 		m_bDebugKeyPressed = true;
@@ -614,7 +658,7 @@ CGame::InitialiseLevel()
 		if (!m_pTitleScreen)
 		{
 			OutputDebugStringA("InitialiseLevel: ERROR - Failed to allocate CTitleScreen!\n");
-			MessageBoxA(NULL, "Failed to allocate CTitleScreen", "Error", MB_OK);
+			MessageBoxA(nullptr, "Failed to allocate CTitleScreen", "Error", MB_OK);
 			return false;
 		}
 	}
@@ -671,7 +715,7 @@ CGame::InitialiseLevel()
 	if (!allFilesExist)
 	{
 		OutputDebugStringA("InitialiseLevel: ERROR - Some media files are missing!\n");
-		MessageBoxA(NULL,
+		MessageBoxA(nullptr,
 		            "Missing media files!\n\n"
 		            "Required files:\n"
 		            "- media\\titlescreen.x\n"
@@ -683,11 +727,11 @@ CGame::InitialiseLevel()
 		            MB_OK | MB_ICONERROR);
 
 		// OPTION 1: Return false (current behavior)
-		// return false;
+		return false;
 
-		// OPTION 2: Continue without title screen (for testing D3D)
-		OutputDebugStringA("InitialiseLevel: Continuing without title screen for testing...\n");
-		return true;
+		// OPTION 2: Continue without a title screen (for testing D3D)
+		// OutputDebugStringA("InitialiseLevel: Continuing without title screen for testing...\n");
+		// return true;
 	}
 
 	OutputDebugStringA("InitialiseLevel: All files found, initializing title screen...\n");
@@ -703,7 +747,7 @@ CGame::InitialiseLevel()
 	if (bFailure)
 	{
 		OutputDebugStringA("InitialiseLevel: ERROR - CTitleScreen->Initialise FAILED!\n");
-		MessageBoxA(NULL,
+		MessageBoxA(nullptr,
 		            "CTitleScreen->Initialise() failed!\n\n"
 		            "This could be due to:\n"
 		            "- Corrupt mesh files (.x files)\n"
@@ -768,7 +812,7 @@ CGame::InitialiseViewport()
 				sprintf_s(buf, "InitialiseViewport: ERROR - Viewport %d failed to initialize!\n", i);
 				OutputDebugStringA(buf);
 				CMessageProcessor::GetInstance()->SendMessage("GAME:     ERROR: COULD NOT INITIALISE VIEWPORTS.");
-				MessageBoxA(NULL, buf, "Viewport Init Failed", MB_OK);
+				MessageBoxA(nullptr, buf, "Viewport Init Failed", MB_OK);
 				break;
 			}
 
@@ -788,7 +832,7 @@ CGame::InitialiseViewport()
 			{
 				sprintf_s(buf, "InitialiseViewport: ERROR - Failed to create camera for viewport %d!\n", i);
 				OutputDebugStringA(buf);
-				MessageBoxA(NULL, buf, "Camera Creation Failed", MB_OK);
+				MessageBoxA(nullptr, buf, "Camera Creation Failed", MB_OK);
 				bFailure = true;
 				break;
 			}

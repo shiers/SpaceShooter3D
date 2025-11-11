@@ -17,8 +17,17 @@ file(GLOB_RECURSE SPACE_SHOOTER_SOURCES
     "src/*.cpp"
 )
 
+
 add_executable(${PROJECT_NAME}
     ${SPACE_SHOOTER_SOURCES}
+)
+
+# Copy entire `Media` folder to the executable output directory after build
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+  COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${PROJECT_NAME}>/Media
+  COMMAND ${CMAKE_COMMAND} -E copy_directory
+          ${CMAKE_CURRENT_SOURCE_DIR}/Media $<TARGET_FILE_DIR:${PROJECT_NAME}>/Media
+  COMMENT "Copying `Media` folder to output directory"
 )
 
 target_include_directories(${PROJECT_NAME}

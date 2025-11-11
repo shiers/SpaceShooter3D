@@ -67,7 +67,7 @@ public:
 	void ResetClock();
 
 	int					GetWindowHeight();
-	int					GetWindowWidth();
+	int					GetWindowWidth() const;
 	HINSTANCE			GetAppInstance();
 	HWND				GetWindow();
 	CClock*				GetClock();
@@ -124,6 +124,7 @@ private:
 	bool m_bBoundingKeyPressed;
 	bool m_bWireKeyPressed;
 	bool m_bDebugKeyPressed;
+	bool m_bDebugCameraActive;
 	bool m_bWasBackButtonPressedLastFrame;
 	bool m_bIsFullScreen;
 };

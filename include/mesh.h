@@ -34,6 +34,8 @@ public:
 	Float32 GetBoundingSphereRadius();
 	static void ToggleBoundingVolumes(bool _bOnOrOff = !m_bBoundingSpheresOn);
 	static void ToggleWireframe(bool _bOnOrOff = !m_bWireFrameOn);
+	static bool AreBoundingVolumesVisible();
+	static bool IsWireframeEnabled();
 
 	void DrawMeshSubset(UInt32 _i);
 

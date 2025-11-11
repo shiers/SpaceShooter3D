@@ -197,6 +197,12 @@ CMesh::ToggleBoundingVolumes(bool _bOnOrOff)
 	m_bBoundingSpheresOn = _bOnOrOff;
 }
 
+bool
+CMesh::AreBoundingVolumesVisible()
+{
+	return (m_bBoundingSpheresOn);
+}
+
 Float32
 CMesh::GetBoundingSphereRadius()
 {
@@ -223,6 +229,12 @@ void
 CMesh::ToggleWireframe(bool _bOnOrOff)
 {
 	m_bWireFrameOn = _bOnOrOff;
+}
+
+bool
+CMesh::IsWireframeEnabled()
+{
+	return (m_bWireFrameOn);
 }
 
 
